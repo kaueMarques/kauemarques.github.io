@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bible Search Tool</title>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Bible Search Tool</h1>
+    
+    <div class="form-row">
+        <div class="col-md-4 mb-3">
+            <input type="text" class="form-control" id="bookName" placeholder="Book Name">
+        </div>
+        <div class="col-md-4 mb-3">
+            <input type="number" class="form-control" id="chapterNumber" placeholder="Chapter Number">
+        </div>
+        <div class="col-md-4 mb-3">
+            <input type="number" class="form-control" id="verseNumber" placeholder="Verse Number">
+        </div>
+    </div>
+    
+    <button class="btn btn-primary mb-3" onclick="searchVerse()">Search</button>
+    
+    <div id="verseDisplay"></div>
+</div>
+
+<script>
+    const bibleDataUrl = 'https://kauemarques.github.io/biblia_ara/bible_ara.json';
+
+    async function downloadDataIfNeeded() {
+        if (!localStorage.getItem('bibleData')) {
+            try {
+                
+                const response = await fetch(bibleDataUrl);
+                if (!response.ok) {
+                    throw new Error(`falha no download: ${response.status} ${response.statusText}`);
+                    downloadDataIfNeeded();
+                }
+
+                const bibleData = await response.json();
+                localStorage.setItem('bibleData', JSON.stringify(bibleData));
+
+            } catch (error) {
+                console.error('Error downloading data:', error);
+            }
+        }
+    }
+
+    function searchVerse() {
+        
+        downloadDataIfNeeded().then(() => {
+            const bookName = document.getElementById('bookName').value;
+            const chapterNumber = parseInt(document.getElementById('chapterNumber').value);
+            const verseNumber = parseInt(document.getElementById('verseNumber').value);
+
+            const bibleData = JSON.parse(localStorage.getItem('bibleData'));
+            if (!bibleData) {
+                console.error('Bible data not found');
+                return;
+            }
+
+            const book = bibleData[bookName];
+            if (!book) {
+                console.error('Book not found');
+                return;
+            }
+
+            const chapter = book[chapterNumber];
+            if (!chapter) {
+                console.error('Chapter not found');
+                return;
+            }
+
+            const verse = chapter[verseNumber];
+            if (!verse) {
+                console.error('Verse not found');
+                return;
+            }
+
+            displayVerse(verse.v);
+        });
+    }
+
+    function displayVerse(verseText) {
+        document.getElementById('verseDisplay').innerHTML = `<p>${verseText}</p>`;
+    }
+
+    // Download the data on page load if needed
+    downloadDataIfNeeded();
+</script>
+
+</body>
+</html>
