@@ -18,51 +18,52 @@ jobs:
 
       - name: Process Issue
         id: process_issue
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          STATE: ${{ github.event.issue.state }}
+          STATE_REASON: ${{ github.event.issue.state_reason }}
+          ACTION: ${{ github.event.action }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          issue_number=${{ github.event.issue.number }}
-          state="${{ github.event.issue.state }}"
-          state_reason="${{ github.event.issue.state_reason }}"
-          action="${{ github.event.action }}"
-
           # Requirement: Only create if closed as completed.
           # If edited, only update if it is already closed.
-          if [ "$action" == "closed" ] && [ "$state_reason" != "completed" ]; then
+          if [ "$ACTION" == "closed" ] && [ "$STATE_REASON" != "completed" ]; then
             echo "Issue closed but not completed. Skipping."
             exit 0
           fi
 
-          if [ "$action" == "edited" ] && [ "$state" != "closed" ]; then
+          if [ "$ACTION" == "edited" ] && [ "$STATE" != "closed" ]; then
             echo "Issue edited but not closed. Skipping."
             exit 0
           fi
 
-          title="${{ github.event.issue.title }}"
-          body="${{ github.event.issue.body }}"
-
           # Check for 'delete' label to archive
           is_deleted=false
-          labels_json=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${issue_number}/labels")
+          labels_json=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER/labels")
           if echo "$labels_json" | jq -r '.[].name' | grep -q "^delete$"; then
             is_deleted=true
           fi
 
           # Sanitize title for filename
-          sanitized_title=$(echo "${title}" | sed 's/[^a-zA-Z0-9]/-/g' | tr -s '-' | sed 's/^-//;s/-$//')
+          sanitized_title=$(echo "$ISSUE_TITLE" | sed 's/[^a-zA-Z0-9]/-/g' | tr -s '-' | sed 's/^-//;s/-$//')
 
           # Find existing file for this issue number
-          existing_file=$(find src/content/post -name "*-#${issue_number}.md" | head -n 1)
+          existing_file=$(find src/content/post -name "*-#$ISSUE_NUMBER.md" | head -n 1)
 
           if [ -n "$existing_file" ]; then
             filename="$existing_file"
             date=$(basename "$existing_file" | cut -d'-' -f1-3)
           else
             date=$(date -u +"%Y-%m-%d")
-            filename="src/content/post/${date}-${sanitized_title}-#${issue_number}.md"
+            filename="src/content/post/${date}-${sanitized_title}-#${ISSUE_NUMBER}.md"
           fi
 
-          # Create frontmatter description
-          description=$(echo "$body" | sed 's/[#*`_]//g' | tr -d '\n' | cut -c1-100 | sed 's/"/'"'"'/g')
+          # Create frontmatter description and escape title for YAML
+          escaped_title=$(echo "$ISSUE_TITLE" | sed "s/\"/'/g")
+          description=$(echo "$ISSUE_BODY" | sed 's/[#*`_]//g' | tr -d '\n' | cut -c1-100 | sed "s/\"/'/g")
 
           # Set draft status
           draft_status="false"
@@ -72,7 +73,7 @@ jobs:
 
           cat <<EOF > "$filename"
 ---
-title: "${title}"
+title: "${escaped_title}"
 description: "${description}..."
 publishDate: "${date}"
 draft: ${draft_status}
@@ -80,7 +81,7 @@ tags:
   - gh-action
 ---
 
-${body}
+${ISSUE_BODY}
 EOF
           echo "filename=$filename" >> $GITHUB_OUTPUT
 
@@ -90,9 +91,11 @@ EOF
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit and Push
-        run: |
-          git add src/content/post/
-          git commit -m "feat: post from issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}" || echo "No changes to commit"
-          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+        run: |
+          git add src/content/post/
+          git commit -m "feat: post from issue #$ISSUE_NUMBER: $ISSUE_TITLE" || echo "No changes to commit"
+          git push

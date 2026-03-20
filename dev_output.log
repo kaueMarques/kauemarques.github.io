@@ -1,0 +1,88 @@
+
+> sleepy-saturn@6.11.0 dev
+> astro dev
+
+11:51:41 [types] Generated 1ms
+11:51:41 [content] Syncing content
+11:51:41 [content] Synced content
+11:51:41 [vite] Re-optimizing dependencies because vite config has changed
+
+ astro  v5.16.3 ready in 2516 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+11:51:42 watching for file changes...
+11:54:37 [200] / 345ms
+11:57:42 [200] / 41ms
+No webmention api token specified in .env
+11:57:44 [200] /posts/webmentions/ 30ms
+11:57:44 [200] /posts/2024-12-15-threads-java/ 23ms
+11:57:44 [200] /about/ 11ms
+11:57:44 [200] /posts/testing/draft-post/ 19ms
+11:57:44 [200] /posts/ 28ms
+12:00:30 [200] / 29ms
+12:00:30 [200] /posts/webmentions/ 15ms
+12:00:30 [200] /posts/2024-12-15-threads-java/ 13ms
+12:00:30 [200] /about/ 7ms
+12:00:30 [200] /posts/testing/draft-post/ 11ms
+12:00:30 [200] /posts/ 29ms
+12:00:30 [200] /posts/2024-12-18-lições-do-metrô-como-a-organização-impulsiona-a-alta-performance---parte-1/ 12ms
+12:00:30 [200] / 16ms
+12:00:30 [200] /notes/ 17ms
+12:00:30 [200] /posts/cover-image/ 11ms
+12:00:31 [200] /posts/2024-12-15-uma-pincelada-de-spring-batch/ 10ms
+12:00:31 [200] /posts/testing/missing-content/ 10ms
+12:00:31 [200] /posts/2012-08-14-blog-post-1/ 10ms
+12:00:31 [200] /posts/2024-12-08-container/ 10ms
+12:00:31 [200] /notes/welcome/ 9ms
+12:00:31 [200] /posts/markdown-elements/admonitions/ 13ms
+12:00:31 [200] /posts/markdown-elements/ 16ms
+12:03:38 [200] / 36ms
+12:03:38 [200] /posts/webmentions/ 20ms
+12:03:38 [200] /posts/2024-12-15-threads-java/ 15ms
+12:03:38 [200] /about/ 9ms
+12:03:38 [200] /posts/testing/draft-post/ 14ms
+12:03:38 [200] /posts/ 22ms
+12:03:38 [200] /posts/2024-12-18-lições-do-metrô-como-a-organização-impulsiona-a-alta-performance---parte-1/ 15ms
+12:03:38 [200] / 16ms
+12:03:38 [200] /notes/ 27ms
+12:03:38 [200] /posts/cover-image/ 23ms
+12:03:38 [200] /posts/2024-12-15-uma-pincelada-de-spring-batch/ 28ms
+12:03:38 [200] /posts/testing/missing-content/ 11ms
+12:03:38 [200] /posts/2012-08-14-blog-post-1/ 12ms
+12:03:38 [200] /posts/2024-12-08-container/ 12ms
+12:03:38 [200] /notes/welcome/ 10ms
+12:03:38 [200] /posts/markdown-elements/admonitions/ 9ms
+12:03:38 [200] /posts/markdown-elements/ 15ms
+12:03:40 [200] /about/ 8ms
+12:03:40 [200] /posts/ 15ms
+12:03:40 [200] / 13ms
+12:03:41 [200] /about/ 14ms
+12:03:42 [200] /tags/gh-action/ 11ms
+12:03:42 [200] /tags/admonitions/ 31ms
+12:03:42 [200] /tags/container/ 9ms
+12:03:42 [200] /tags/webmentions/ 9ms
+12:03:42 [200] /posts/markdown-elements/ 13ms
+12:03:42 [200] /posts/2024-12-18-lições-do-metrô-como-a-organização-impulsiona-a-alta-performance---parte-1/ 11ms
+12:03:42 [200] /tags/ 9ms
+12:03:42 [200] /posts/ 12ms
+12:03:42 [200] /tags/markdown/ 9ms
+12:03:42 [200] /rss.xml 8ms
+12:03:42 [200] /posts/2024-12-15-uma-pincelada-de-spring-batch/ 9ms
+12:03:42 [200] /posts/webmentions/ 9ms
+12:03:42 [200] / 12ms
+12:03:42 [200] /posts/testing/missing-content/ 9ms
+12:03:42 [200] /posts/2012-08-14-blog-post-1/ 9ms
+12:03:42 [200] /posts/cover-image/ 10ms
+12:03:42 [200] /posts/2 9ms
+12:03:42 [200] /posts/testing/draft-post/ 9ms
+12:03:42 [200] /tags/astro/ 8ms
+12:03:42 [200] /posts/2024-12-08-container/ 8ms
+12:03:42 [200] /posts/markdown-elements/admonitions/ 9ms
+12:03:42 [200] /posts/2024-12-15-threads-java/ 13ms
+12:03:42 [200] /tags/test/ 9ms
+12:10:59 [watch] .github/workflows/issue-post.yml
+12:10:59 [watch] .github/workflows/issue-post.yml
+12:13:44 [watch] src/components/layout/Footer.astro
+12:13:44 [watch] src/components/layout/Footer.astro
