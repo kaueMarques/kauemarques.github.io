@@ -16,10 +16,10 @@
 	"dependencies": {
 		"@astrojs/markdown-remark": "^7.0.1",
 		"@astrojs/mdx": "4.3.12",
-		"@astrojs/rss": "4.0.14",
-		"@astrojs/sitemap": "3.6.0",
-		"@tailwindcss/vite": "4.1.17",
-		"astro": "6.0.7",
+		"@astrojs/rss": "4.0.17",
+		"@astrojs/sitemap": "3.7.1",
+		"@tailwindcss/vite": "4.2.2",
+		"astro": "6.0.8",
 		"astro-expressive-code": "^0.41.3",
 		"astro-icon": "^1.1.5",
 		"astro-robots-txt": "^1.0.0",
@@ -33,7 +33,7 @@
 		"rehype-external-links": "^3.0.0",
 		"rehype-unwrap-images": "^1.0.0",
 		"remark-directive": "^4.0.0",
-		"satori": "0.18.3",
+		"satori": "0.26.0",
 		"satori-html": "^0.3.2",
 		"sharp": "^0.34.5",
 		"unified": "^11.0.5",
@@ -54,7 +54,7 @@
 		"prettier-plugin-astro": "0.14.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"reading-time": "^1.5.0",
-		"tailwindcss": "4.1.17",
+		"tailwindcss": "4.2.2",
 		"typescript": "^5.9.3"
 	},
 	"pnpm": {
