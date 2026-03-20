@@ -2,11 +2,11 @@ name: ARTICLE CREATION - GH ACTION SCRIPT
 
 on:
   issues:
-    types: [labeled, completed, reopened]
+    types: [closed, edited]
 
 jobs:
   create-page:
-    if: ${{ github.event.issue.user.login == github.repository_owner }}
+    if: github.event.issue.user.login == 'kaueMarques'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -14,85 +14,85 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Check for relevant labels
-        id: check_labels
+      - name: Process Issue
+        id: process_issue
         run: |
           issue_number=${{ github.event.issue.number }}
-          repo_owner=${{ github.repository_owner }}
-          repo_name=${{ github.event.repository.name }}
-          labels=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${repo_owner}/${repo_name}/issues/${issue_number}/labels" | jq -r '.[].name')
-          if [[ " ${labels[@]} " =~ " delete " ]]; then
-            filename=$(find _posts -name "*-#${issue_number}.md")
-            if [ -f "$filename" ]; then
-              rm "$filename"
-            fi
-            curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -X DELETE \
-              "https://api.github.com/repos/${repo_owner}/${repo_name}/issues/${issue_number}"
-            echo "::set-output name=file_deleted::true"
-            exit 0
-          elif [[ ! " ${labels[@]} " =~ " post-creation " && ! " ${labels[@]} " =~ " edited " && ! " ${labels[@]} " =~ " posted " ]]; then
-            echo "Relevant labels not found, skipping action."
+          state="${{ github.event.issue.state }}"
+          state_reason="${{ github.event.issue.state_reason }}"
+          action="${{ github.event.action }}"
+
+          # Requirement: Only create if closed as completed.
+          # If edited, only update if it is already closed.
+          if [ "$action" == "closed" ] && [ "$state_reason" != "completed" ]; then
+            echo "Issue closed but not completed. Skipping."
             exit 0
           fi
 
-      - name: Create _posts directory
-        if: steps.check_labels.outputs.file_deleted != 'true'
-        run: mkdir -p _posts
+          if [ "$action" == "edited" ] && [ "$state" != "closed" ]; then
+            echo "Issue edited but not closed. Skipping."
+            exit 0
+          fi
 
-      - name: Extract issue content
-        if: steps.check_labels.outputs.file_deleted != 'true'
-        id: extract_issue
-        run: |
-          date=$(date -u +"%Y-%m-%d")
           title="${{ github.event.issue.title }}"
-          sanitized_title=$(echo "${title}" | tr ' ' '-')
-          filename="_posts/${date}-${sanitized_title}-#${issue_number}.md"
-          if [ -f "$filename" ]; then
-            rm "$filename"
-            curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              -X POST \
-              -d '{"labels":["edited"]}' \
-              "https://api.github.com/repos/${repo_owner}/${repo_name}/issues/${issue_number}/labels"
+          body="${{ github.event.issue.body }}"
+
+          # Check for 'delete' label to archive
+          is_deleted=false
+          labels_json=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${issue_number}/labels")
+          if echo "$labels_json" | jq -r '.[].name' | grep -q "^delete$"; then
+            is_deleted=true
           fi
-          {
-            echo "---"
-            echo "title: '${title}'"
-            echo "date: ${date}"
-            echo "permalink: /posts/${date:0:4}/${date:5:2}/${sanitized_title}/"
-            echo "tags:"
-            echo "  - gh-action"
-            echo "  - kt-article"
-            echo "---"
-            echo ""
-            echo "${{ github.event.issue.body }}"
-          } >> "$filename"
+
+          # Sanitize title for filename
+          sanitized_title=$(echo "${title}" | sed 's/[^a-zA-Z0-9]/-/g' | tr -s '-' | sed 's/^-//;s/-$//')
+
+          # Find existing file for this issue number
+          existing_file=$(find src/content/post -name "*-#${issue_number}.md" | head -n 1)
+
+          if [ -n "$existing_file" ]; then
+            filename="$existing_file"
+            date=$(basename "$existing_file" | cut -d'-' -f1-3)
+          else
+            date=$(date -u +"%Y-%m-%d")
+            filename="src/content/post/${date}-${sanitized_title}-#${issue_number}.md"
+          fi
+
+          # Create frontmatter description
+          description=$(echo "$body" | sed 's/[#*`_]//g' | tr -d '\n' | cut -c1-100 | sed 's/"/'"'"'/g')
+
+          # Set draft status
+          draft_status="false"
+          if [ "$is_deleted" = true ]; then
+            draft_status="true"
+          fi
+
+          cat <<EOF > "$filename"
+---
+title: "${title}"
+description: "${description}..."
+publishDate: "${date}"
+draft: ${draft_status}
+tags:
+  - gh-action
+---
+
+${body}
+EOF
+          echo "filename=$filename" >> $GITHUB_OUTPUT
 
       - name: Configure Git
-        if: steps.check_labels.outputs.file_deleted != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit and Push
-        if: steps.check_labels.outputs.file_deleted != 'true'
         run: |
-          git add _posts/
-          git commit -m "feat: post feito por action #${{ github.event.issue.number }} titulo ${{ github.event.issue.title }}"
+          git add src/content/post/
+          git commit -m "feat: post from issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}" || echo "No changes to commit"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.NEW_PAGE_TOKEN }}
-
-      - name: Add 'posted' label
-        if: steps.check_labels.outputs.file_deleted != 'true'
-        run: |
-          issue_number=${{ github.event.issue.number }}
-          repo_owner=${{ github.repository_owner }}
-          repo_name=${{ github.event.repository.name }}
-          curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -X POST \
-            -d '{"labels":["posted"]}' \
-            "https://api.github.com/repos/${repo_owner}/${repo_name}/issues/${issue_number}/labels"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
