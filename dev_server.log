@@ -1,0 +1,32 @@
+
+> sleepy-saturn@6.11.0 dev
+> astro dev
+
+12:25:48 [types] Generated 1ms
+12:25:48 [content] Syncing content
+12:25:48 [content] Synced content
+
+ astro  v5.16.3 ready in 2261 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+12:25:48 watching for file changes...
+12:26:06 [200] / 426ms
+12:26:06 [200] / 25ms
+No webmention api token specified in .env
+12:26:07 [200] /posts/webmentions/ 17ms
+12:26:07 [200] /posts/2024-12-15-threads-java/ 12ms
+12:26:07 [200] /posts/testing/draft-post/ 11ms
+12:26:07 [200] /posts/ 17ms
+12:26:07 [200] /posts/2024-12-18-lições-do-metrô-como-a-organização-impulsiona-a-alta-performance---parte-1/ 11ms
+12:26:07 [200] /notes/ 10ms
+12:26:07 [200] /posts/cover-image/ 13ms
+12:26:07 [200] /about/ 7ms
+12:26:07 [200] /posts/2024-12-15-uma-pincelada-de-spring-batch/ 11ms
+12:26:07 [200] /posts/testing/missing-content/ 9ms
+12:26:07 [200] /posts/2012-08-14-blog-post-1/ 10ms
+12:26:07 [200] /posts/2024-12-08-container/ 9ms
+12:26:07 [200] /notes/welcome/ 9ms
+12:26:07 [200] /posts/markdown-elements/admonitions/ 10ms
+12:26:07 [200] /posts/markdown-elements/ 12ms
