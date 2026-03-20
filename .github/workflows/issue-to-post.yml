@@ -1,0 +1,90 @@
+name: Issue to Post
+
+on:
+  issues:
+    types: [opened, edited, labeled, unlabeled, deleted]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  manage_post:
+    if: github.actor == 'kaueMarques'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Processar Issue e Gerar Post
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_DATE: ${{ github.event.issue.created_at }}
+          ACTION_TYPE: ${{ github.event.action }}
+          LABEL_NAME: ${{ github.event.label.name }}
+          LABELS: ${{ toJSON(github.event.issue.labels.*.name) }}
+        run: |
+          FILE_PATH="src/content/post/issue-${ISSUE_NUMBER}.md"
+          
+          # Verifica se a tag 'posted' está aplicada na issue
+          HAS_POSTED_LABEL=$(echo "$LABELS" | grep -i '"posted"' || true)
+          OPERATION=""
+          
+          # Define a ação baseada no evento que engatilhou a esteira
+          if [[ "$ACTION_TYPE" == "deleted" ]]; then
+            OPERATION="deletar"
+          elif [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "posted" ]]; then
+            OPERATION="deletar"
+          elif [[ "$ACTION_TYPE" == "opened" && -n "$HAS_POSTED_LABEL" ]]; then
+            OPERATION="postar"
+          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "posted" ]]; then
+            OPERATION="postar"
+          elif [[ "$ACTION_TYPE" == "edited" && -n "$HAS_POSTED_LABEL" ]]; then
+            OPERATION="editar"
+          else
+            echo "A tag 'posted' não está presente ou não é uma ação suportada. Ignorando."
+            exit 0
+          fi
+          
+          # Comentário inicial informando o que está sendo feito (se a issue não foi apagada)
+          if [[ "$OPERATION" != "deletar" && "$ACTION_TYPE" != "deleted" ]]; then
+            gh issue comment $ISSUE_NUMBER --body "Processando post... Ação em execução: **$OPERATION**"
+          fi
+          
+          # Cria, edita ou deleta o arquivo do post na pasta do blog
+          if [[ "$OPERATION" == "deletar" ]]; then
+            rm -f "$FILE_PATH"
+          else
+            mkdir -p src/content/post
+            SAFE_TITLE="${ISSUE_TITLE//\"/\\\"}"
+            cat <<EOF > "$FILE_PATH"
+---
+title: "${SAFE_TITLE}"
+description: "Post gerado a partir da issue #${ISSUE_NUMBER}"
+publishDate: "${ISSUE_DATE}"
+tags: ["issue", "github"]
+---
+
+${ISSUE_BODY}
+EOF
+          fi
+          
+          # Comita as alterações e faz o push para o GitHub Pages processar o deploy
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$FILE_PATH"
+          
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: $OPERATION post gerado pela issue #${ISSUE_NUMBER}"
+            git push
+            
+            # Comentário de sucesso final quando terminado
+            if [[ "$OPERATION" != "deletar" && "$ACTION_TYPE" != "deleted" ]]; then
+              gh issue comment $ISSUE_NUMBER --body "Post gerado com sucesso!"
+            fi
+          else
+            echo "O conteúdo é idêntico. Nenhuma mudança para comitar."
+          fi
