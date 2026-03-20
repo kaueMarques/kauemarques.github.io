@@ -1,0 +1,76 @@
+
+> sleepy-saturn@6.11.0 dev
+> astro dev
+
+01:21:09 [types] Generated 1ms
+01:21:10 [content] Syncing content
+
+ update  ▶ New version of Astro available: 6.0.7
+  Run pnpm dlx @astrojs/upgrade to update
+
+01:21:11 [content] Synced content
+01:21:11 [vite] Re-optimizing dependencies because vite config has changed
+
+ astro  v5.16.3 ready in 3234 ms
+
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+
+01:21:11 watching for file changes...
+01:24:08 [200] / 367ms
+01:24:09 [200] /posts/ 18ms
+01:24:09 [200] / 18ms
+No webmention api token specified in .env
+01:24:09 [200] /posts/2024-12-15-threads-java/ 14ms
+01:24:09 [200] /posts/markdown-elements/ 18ms
+01:24:09 [200] /posts/testing/missing-content/ 9ms
+01:24:09 [200] /posts/cover-image/ 12ms
+01:24:09 [200] /posts/2024-12-15-uma-pincelada-de-spring-batch/ 9ms
+01:24:09 [200] /posts/markdown-elements/admonitions/ 11ms
+01:24:09 [200] /about/ 7ms
+01:24:10 [200] /posts/testing/draft-post/ 10ms
+01:24:10 [200] /posts/2024-12-18-lições-do-metrô-como-a-organização-impulsiona-a-alta-performance---parte-1/ 8ms
+01:24:10 [200] /posts/webmentions/ 9ms
+01:24:10 [200] /notes/welcome/ 7ms
+01:24:10 [200] /posts/2024-12-08-container/ 9ms
+01:24:10 [200] /posts/2012-08-14-blog-post-1/ 8ms
+01:24:10 [200] /notes/ 9ms
+01:29:27 [watch] src/components/layout/Header.astro
+01:29:27 [watch] src/components/layout/Header.astro
+01:29:35 [200] / 129ms
+01:29:35 [200] /posts/webmentions/ 48ms
+01:29:35 [200] /posts/2024-12-15-threads-java/ 34ms
+01:29:35 [200] /about/ 14ms
+01:29:35 [200] /posts/testing/draft-post/ 28ms
+01:29:35 [200] /posts/ 47ms
+01:29:36 [200] /posts/2024-12-18-lições-do-metrô-como-a-organização-impulsiona-a-alta-performance---parte-1/ 22ms
+01:29:36 [200] / 29ms
+01:29:36 [200] /notes/ 22ms
+01:29:36 [200] /posts/cover-image/ 35ms
+01:29:36 [200] /posts/2024-12-15-uma-pincelada-de-spring-batch/ 27ms
+01:29:36 [200] /posts/testing/missing-content/ 30ms
+01:29:36 [200] /posts/2012-08-14-blog-post-1/ 28ms
+01:29:36 [200] /posts/2024-12-08-container/ 35ms
+01:29:36 [200] /notes/welcome/ 20ms
+01:29:36 [200] /posts/markdown-elements/admonitions/ 29ms
+01:29:36 [200] /posts/markdown-elements/ 31ms
+01:34:48 [watch] _posts/2024-12-08-container.md
+01:34:48 [watch] _posts/2024-12-08-container.md
+01:34:48 [watch] _posts/2012-08-14-blog-post-1.md
+01:34:48 [watch] _posts/2012-08-14-blog-post-1.md
+01:34:48 [watch] _posts/2024-12-15-Threads-java.md
+01:34:48 [watch] _posts/2024-12-15-Threads-java.md
+01:34:48 [watch] _posts/2024-12-15-Uma-pincelada-de-spring-batch.md
+01:34:48 [watch] _posts/2024-12-15-Uma-pincelada-de-spring-batch.md
+01:34:48 [watch] _posts/2024-12-18-Lições-do-Metrô:-Como-a-Organização-Impulsiona-a-Alta-Performance---Parte-1.md
+01:34:48 [watch] _posts/2024-12-18-Lições-do-Metrô:-Como-a-Organização-Impulsiona-a-Alta-Performance---Parte-1.md
+01:34:48 [watch] .github/workflows/file-creation-script/commit-and-push.sh
+01:34:48 [watch] .github/workflows/file-creation-script/commit-and-push.sh
+01:34:48 [watch] .github/workflows/file-creation-script/header.sh
+01:34:48 [watch] .github/workflows/file-creation-script/header.sh
+01:34:48 [watch] .github/workflows/issue-kt.yml
+01:34:48 [watch] .github/workflows/issue-kt.yml
+01:34:48 [watch] .github/workflows/ci.yml
+01:34:48 [watch] .github/workflows/ci.yml
+01:34:48 [watch] .github/workflows/stale.yml
+01:34:48 [watch] .github/workflows/stale.yml

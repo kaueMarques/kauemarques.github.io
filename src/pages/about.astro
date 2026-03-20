@@ -1,0 +1,82 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+
+const meta = {
+	description: "Sobre Kauê Marques Barbosa - Engenheiro de Software no Itaú Unibanco",
+	title: "Sobre",
+};
+---
+
+<PageLayout meta={meta}>
+	<h1 class="title mb-12">Sobre Mim</h1>
+	<div class="prose prose-sm prose-cactus max-w-none">
+		<p>
+			Olá! Meu nome é Kauê. Sou <b>Engenheiro de Software</b> no Itaú Unibanco.
+		</p>
+		<p>
+			Atuo no desenvolvimento de soluções escaláveis em sistemas financeiros e de mídia utilizando <b>Java (Spring), Go Lang e Python</b>, com forte foco em arquiteturas em <b>Nuvem AWS</b>. Possuo expertise em mensageria, bancos de dados NoSQL, Kubernetes e integração de Inteligência Artificial sistêmica.
+		</p>
+
+		<h2>Principais Competências</h2>
+		<ul>
+			<li><b>Linguagens e Frameworks:</b> Java (Spring Boot), Go Lang, Python (Flask).</li>
+			<li><b>Nuvem e Infraestrutura:</b> AWS (SQS, SNS, DynamoDB, ECS), Oracle Cloud (OCI), Google Cloud, Kubernetes, Docker.</li>
+			<li><b>CI/CD e Ferramentas:</b> Jenkins, GitHub Actions, Jira, Shell Script.</li>
+			<li><b>Arquitetura:</b> Princípios SOLID, Arquitetura Hexagonal e Data Mesh.</li>
+			<li><b>Idiomas:</b> Inglês Fluente (experiência prática conduzindo e lidando com demandas de comunicação em projetos globais).</li>
+		</ul>
+
+		<h2>Experiência Profissional</h2>
+		<details>
+			<summary><b>Itaú Unibanco - Software Engineer</b></summary>
+			<ul>
+				<li>Colaboração com multinacionais no desenvolvimento de ferramentas para a implementação da solução PIX.</li>
+				<li>Utilização de Java, Python e arquiteturas AWS em conformidade com as normas do Banco Central.</li>
+				<li>Desenvolvimento de ferramentas proprietárias dentro do sistema MCP (Model Context Protocol) na plataforma de IA do banco.</li>
+				<li>Construção de sistemas que utilizam análises automáticas e integração sistêmica de IA, incluindo o uso de modelos de linguagem personalizados (CLMs).</li>
+			</ul>
+		</details>
+		<details>
+			<summary><b>Banco Santander - Software Engineer</b></summary>
+			<ul>
+				<li>Atuação em um projeto global para o banco espanhol focado no desenvolvimento e modernização de sistemas de pagamento de alta performance.</li>
+				<li>Modernização de arquiteturas críticas de pagamentos utilizando a referência BIAN para garantir escalabilidade e resiliência das transações.</li>
+			</ul>
+		</details>
+		<details>
+			<summary><b>IBM - Java Software Developer</b></summary>
+			<ul>
+				<li>Atuação em projeto para banco multinacional no desenvolvimento de sistemas de alto desempenho para processamento de PIX, boletos e cartões de crédito.</li>
+				<li>Participação em migrações para a nuvem, visando escalabilidade, segurança e resiliência.</li>
+				<li>Mentoria técnica e realização de onboardings técnicos focados nas melhores práticas da indústria.</li>
+				<li>Aplicação de práticas de arquitetura como SOLID e Arquitetura Hexagonal.</li>
+				<li>Integração de soluções de IA e dados utilizando IBM WatsonX AI e IBM Infosphere Data Architecture.</li>
+			</ul>
+		</details>
+		<details>
+			<summary><b>TV Globo - Java Software Engineer</b></summary>
+			<ul>
+				<li>Identificação e resolução de falhas em sistemas legados e bancos de dados.</li>
+				<li>Migração de sistemas legados para a nuvem (Google Cloud).</li>
+				<li>Automação de processos manuais e rotinas de usuários para otimizar operações e transferências de arquivos.</li>
+				<li>Utilização de Java, WebLogic, SpringBoot e OracleDB para gestão robusta de dados e aplicações.</li>
+			</ul>
+		</details>
+
+		<h2>Publicações em congressos</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Congresso</th>
+					<th>Titulo do trabalho</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>CONGRESSO DE INOVAÇÃO, CIÊNCIA E TECNOLOGIA DO IFSP</td>
+					<td><a href="https://ocs.ifsp.edu.br/conict/xivconict/paper/view/9464" target="_blank">OTIMIZAÇÃO DA MANUTENÇÃO EM SISTEMAS LEGADOS: CASO DE ESTUDO DO ORACLE WEBLOGIC 11G</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</PageLayout>
