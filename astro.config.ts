@@ -90,6 +90,8 @@ export default defineConfig({
 		optimizeDeps: {
 			exclude: ["@resvg/resvg-js"],
 		},
+		// @ts-expect-error - Tailwind 4 returns an array of plugins, but the type expects a single plugin or array of single plugins.
+		// This works at runtime in Astro/Vite.
 		plugins: [tailwind(), rawFonts([".ttf", ".woff"])],
 	},
 	env: {
