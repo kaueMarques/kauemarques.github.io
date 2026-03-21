@@ -61,4 +61,5 @@ jobs:
             gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado! A exclusão foi refletida no site."
           else
             gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado com sucesso! Acesse seu post em: https://kauemarques.github.io/posts/issue-$ISSUE_NUMBER/"
+            gh issue edit $ISSUE_NUMBER --repo ${{ github.repository }} --add-label "publicado" || true
           fi
