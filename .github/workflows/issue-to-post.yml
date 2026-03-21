@@ -1,4 +1,4 @@
-name: Issue to Post
+name: GH - GERENCIA BLOG
 
 on:
   issues:
@@ -43,58 +43,46 @@ jobs:
           HAS_EDITAR_LABEL=$(echo "$LABELS" | grep -i '"editar"' || true)
           OPERATION=""
           
-          # Define a ação baseada no evento que engatilhou a esteira
-          if [[ "$ACTION_TYPE" == "deleted" ]]; then
+          # 1. Determina a ação com base nos gatilhos
+          if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "post" ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "exclusao" ]]; then
             OPERATION="deletar"
-          elif [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "post" ]]; then
-            OPERATION="deletar"
-          elif [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]]; then
-            OPERATION="deletar"
-            # Tenta excluir a issue fisicamente (falhará se o token não tiver escopo admin). Fallback: arquivar e fechar.
-            gh issue delete $ISSUE_NUMBER --yes || {
-              gh issue reopen $ISSUE_NUMBER || true
-              gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "post" --remove-label "editar" || true
-              gh issue close $ISSUE_NUMBER --reason "not planned"
-            }
-          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "exclusao" ]]; then
-            OPERATION="deletar"
-            # Reabre a issue, troca a tag para arquivado e fecha como "not planned"
-            gh issue reopen $ISSUE_NUMBER || true
-            gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "exclusao" || true
-            gh issue close $ISSUE_NUMBER --reason "not planned"
-          elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]]; then
+          elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && -n "$HAS_POSTED_LABEL" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "post" ]]; then
             OPERATION="postar"
-            gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
-          elif [[ "$ACTION_TYPE" == "reopened" ]]; then
+          elif [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POSTED_LABEL" || -n "$HAS_EDITAR_LABEL") ]]; then
             OPERATION="editar"
-            gh issue edit $ISSUE_NUMBER --add-label "editar" --remove-label "arquivado" || true
-          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]]; then
-            OPERATION="editar"
-            gh issue edit $ISSUE_NUMBER --remove-label "editar" || true
-          elif [[ "$ACTION_TYPE" == "opened" && -n "$HAS_POSTED_LABEL" ]]; then
-            OPERATION="postar"
-          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "post" ]]; then
-            OPERATION="postar"
-          elif [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POSTED_LABEL" || -n "$HAS_EDITAR_LABEL") ]]; then
-            OPERATION="editar"
-            gh issue reopen $ISSUE_NUMBER || true
-            gh issue edit $ISSUE_NUMBER --add-label "editar" || true
-          elif [[ "$ACTION_TYPE" == "created" ]]; then
-            echo "Comentário não contém comandos válidos. Ignorando."
-            exit 0
           else
             echo "Nenhuma ação mapeada para este fluxo. Ignorando."
             exit 0
           fi
           
-          # Comentário inicial informando o que está sendo feito (se a issue não foi apagada)
-          if [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]]; then
-            gh issue comment $ISSUE_NUMBER --body "\$processar"
-          elif [[ "$OPERATION" != "deletar" && "$ACTION_TYPE" != "deleted" && "$ACTION_TYPE" != "created" ]]; then
-            gh issue comment $ISSUE_NUMBER --body "Processando post... Ação em execução: **$OPERATION**"
+          # 2. Comentário inicial na Issue
+          if [[ "$ACTION_TYPE" != "deleted" ]]; then
+            gh issue comment $ISSUE_NUMBER --body "⏳ Processando post... Ação em execução: **$OPERATION**" || true
           fi
           
-          # Cria, edita ou deleta o arquivo do post na pasta do blog
+          # 3. Atualiza estado e labels na interface do GitHub
+          if [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]]; then
+            gh issue delete $ISSUE_NUMBER --yes || {
+              gh issue reopen $ISSUE_NUMBER || true
+              gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "post,editar" || true
+              gh issue close $ISSUE_NUMBER --reason "not planned"
+            }
+          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "exclusao" ]]; then
+            gh issue reopen $ISSUE_NUMBER || true
+            gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "exclusao" || true
+            gh issue close $ISSUE_NUMBER --reason "not planned"
+          elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]]; then
+            gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
+          elif [[ "$ACTION_TYPE" == "reopened" ]]; then
+            gh issue edit $ISSUE_NUMBER --add-label "editar" --remove-label "arquivado" || true
+          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]]; then
+            gh issue edit $ISSUE_NUMBER --remove-label "editar" || true
+          elif [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POSTED_LABEL" || -n "$HAS_EDITAR_LABEL") ]]; then
+            gh issue reopen $ISSUE_NUMBER || true
+            gh issue edit $ISSUE_NUMBER --add-label "editar" || true
+          fi
+
+          # 4. Cria, edita ou deleta o arquivo na pasta do blog localmente
           if [[ "$OPERATION" == "deletar" ]]; then
             rm -f "$FILE_PATH"
           else
@@ -112,7 +100,7 @@ jobs:
             } > "$FILE_PATH"
           fi
           
-          # Comita as alterações e faz o push para o GitHub Pages processar o deploy
+          # 5. Comita as alterações e faz o push
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add "$FILE_PATH"
@@ -121,25 +109,30 @@ jobs:
             git commit -m "chore: $OPERATION post gerado pela issue #${ISSUE_NUMBER}"
             git push
             
-            # Aciona a esteira de deploy explicitamente (já que commits de bots não engatilham o on:push)
+            # Aciona a esteira de deploy
             gh workflow run deploy.yml
             
-            # Comentário de sucesso final quando terminado
-            if [[ "$OPERATION" != "deletar" && "$ACTION_TYPE" != "deleted" ]]; then
-              gh issue comment $ISSUE_NUMBER --body "Post gerado com sucesso! O deploy foi iniciado."
-              if [[ "$ACTION_TYPE" == "edited" ]]; then
-                gh issue comment $ISSUE_NUMBER --body "post atualizado"
-                gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
-                gh issue close $ISSUE_NUMBER --reason "completed"
+            # 6. Comentário final na Issue informando que funcionou
+            if [[ "$ACTION_TYPE" != "deleted" ]]; then
+              if [[ "$OPERATION" == "deletar" ]]; then
+                gh issue comment $ISSUE_NUMBER --body "🗑️ Post excluído com sucesso do blog! O deploy foi iniciado." || true
+              elif [[ "$OPERATION" == "editar" ]]; then
+                gh issue comment $ISSUE_NUMBER --body "✏️ Post atualizado com sucesso! O deploy foi iniciado." || true
+                if [[ "$ACTION_TYPE" == "edited" ]]; then
+                  gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
+                  gh issue close $ISSUE_NUMBER --reason "completed" || true
+                fi
               else
-                gh issue comment $ISSUE_NUMBER --body "Post gerado com sucesso! O deploy foi iniciado."
+                gh issue comment $ISSUE_NUMBER --body "✅ Post gerado com sucesso! O deploy foi iniciado." || true
               fi
             fi
           else
             echo "O conteúdo é idêntico. Nenhuma mudança para comitar."
-            if [[ "$ACTION_TYPE" == "edited" ]]; then
-              gh issue comment $ISSUE_NUMBER --body "post atualizado"
-              gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
-              gh issue close $ISSUE_NUMBER --reason "completed"
+            if [[ "$ACTION_TYPE" != "deleted" ]]; then
+              gh issue comment $ISSUE_NUMBER --body "⚠️ Nenhuma mudança detectada. O conteúdo do post já estava atualizado." || true
+              if [[ "$ACTION_TYPE" == "edited" ]]; then
+                gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
+                gh issue close $ISSUE_NUMBER --reason "completed" || true
+              fi
             fi
           fi
