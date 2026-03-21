@@ -55,14 +55,18 @@ jobs:
             exit 0
           fi
           
+          if [[ "$OPERATION" == "deletar" && "$ACTION_TYPE" != "deleted" ]]; then
+            gh issue comment $ISSUE_NUMBER --body "⏳ Excluindo postagem..." || true
+          fi
+          
           # 2. Atualiza estado e labels na interface do GitHub (Sem fechar ainda)
           if [[ "$OPERATION" == "deletar" ]]; then
-            gh issue edit $ISSUE_NUMBER --add-label "deleted" --remove-label "post,editar,arquivado,exclusao,delete,publicado" || true
+            gh issue edit $ISSUE_NUMBER --add-label "deleted,action-gerencia-blog" --remove-label "post,editar,arquivado,exclusao,delete,publicado" || true
           elif [[ "$OPERATION" == "postar" ]]; then
-            gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar,deleted,arquivado,exclusao,delete" || true
+            gh issue edit $ISSUE_NUMBER --add-label "post,action-gerencia-blog" --remove-label "editar,deleted,arquivado,exclusao,delete" || true
           elif [[ "$OPERATION" == "editar" ]]; then
             gh issue reopen $ISSUE_NUMBER || true
-            gh issue edit $ISSUE_NUMBER --add-label "editar" --remove-label "deleted,arquivado,exclusao,delete" || true
+            gh issue edit $ISSUE_NUMBER --add-label "editar,edited,action-gerencia-blog" --remove-label "deleted,arquivado,exclusao,delete" || true
           fi
 
           # 3. Cria, edita ou deleta o arquivo na pasta do blog localmente
@@ -101,6 +105,7 @@ jobs:
             if [[ "$ACTION_TYPE" != "deleted" ]]; then
               if [[ "$OPERATION" == "deletar" ]]; then
                 gh issue comment $ISSUE_NUMBER --body "🗑️ Post excluído com sucesso do blog!" || true
+                gh issue edit $ISSUE_NUMBER --remove-label "post,publicado" || true
               elif [[ "$OPERATION" == "editar" ]]; then
                 gh issue comment $ISSUE_NUMBER --body "✏️ Post atualizado com sucesso!" || true
               else
