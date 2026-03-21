@@ -4,11 +4,21 @@ on:
   push:
     branches: [main, master]
   workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Número da issue para notificar'
+        required: false
+        type: string
+      operation:
+        description: 'Operação realizada'
+        required: false
+        type: string
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  issues: write
 
 jobs:
   build:
@@ -40,3 +50,15 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Notificar Issue
+        if: ${{ github.event.inputs.issue_number != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
+          OPERATION: ${{ github.event.inputs.operation }}
+        run: |
+          if [[ "$OPERATION" == "deletar" ]]; then
+            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado! A exclusão foi refletida no site."
+          else
+            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado com sucesso! Acesse seu post em: https://kauemarques.github.io/posts/issue-$ISSUE_NUMBER/"
+          fi
