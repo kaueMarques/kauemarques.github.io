@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   manage_post:
-    if: github.actor == 'kaueMarques'
+    if: github.actor == 'kaueMarques' && github.event.issue.user.login == 'kaueMarques'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do repositório
