@@ -24,3 +24,6 @@ Nas artes plásticas, o Neoclassicismo abandonou as cores vibrantes e as pincela
 O Neoclassicismo no Brasil
 No Brasil, o estilo foi introduzido formalmente pela Missão Artística Francesa de 1816. Ele serviu como um símbolo de modernização e ruptura com o passado colonial barroco. O neoclássico tornou-se o estilo oficial das instituições do Império, visível em prédios como a antiga Academia Imperial de Belas Artes e o Palácio de Cristal em Petrópolis.
 
+
+…
+
