@@ -44,7 +44,7 @@ jobs:
           OPERATION=""
           
           # 1. Determina a ação com base nos gatilhos
-          if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "post" ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "exclusao" ]]; then
+          if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "post" ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
             OPERATION="deletar"
           elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && -n "$HAS_POSTED_LABEL" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "post" ]]; then
             OPERATION="postar"
@@ -67,9 +67,9 @@ jobs:
               gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "post,editar" || true
               gh issue close $ISSUE_NUMBER --reason "not planned"
             }
-          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "exclusao" ]]; then
+          elif [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
             gh issue reopen $ISSUE_NUMBER || true
-            gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "exclusao" || true
+            gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "$LABEL_NAME" || true
             gh issue close $ISSUE_NUMBER --reason "not planned"
           elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]]; then
             gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
@@ -107,6 +107,7 @@ jobs:
           
           if ! git diff-index --quiet HEAD; then
             git commit -m "chore: $OPERATION post gerado pela issue #${ISSUE_NUMBER}"
+            git pull --rebase origin $(git branch --show-current)
             git push
             
             # Aciona a esteira de deploy
