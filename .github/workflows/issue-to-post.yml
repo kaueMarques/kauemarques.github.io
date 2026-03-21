@@ -39,21 +39,21 @@ jobs:
           FILE_PATH="src/content/post/issue-${ISSUE_NUMBER}.md"
           
           # Verifica se as tags existem na issue
-          HAS_POSTED_LABEL=$(echo "$LABELS" | grep -i '"posted"' || true)
+          HAS_POSTED_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
           HAS_EDITAR_LABEL=$(echo "$LABELS" | grep -i '"editar"' || true)
           OPERATION=""
           
           # Define a ação baseada no evento que engatilhou a esteira
           if [[ "$ACTION_TYPE" == "deleted" ]]; then
             OPERATION="deletar"
-          elif [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "posted" ]]; then
+          elif [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "post" ]]; then
             OPERATION="deletar"
         elif [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]]; then
           OPERATION="deletar"
           # Tenta excluir a issue fisicamente (falhará se o token não tiver escopo admin). Fallback: arquivar e fechar.
           gh issue delete $ISSUE_NUMBER --yes || {
             gh issue reopen $ISSUE_NUMBER || true
-            gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "posted" --remove-label "editar" || true
+            gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "post" --remove-label "editar" || true
             gh issue close $ISSUE_NUMBER --reason "not planned"
           }
           elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "exclusao" ]]; then
@@ -64,7 +64,7 @@ jobs:
             gh issue close $ISSUE_NUMBER --reason "not planned"
           elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]]; then
             OPERATION="postar"
-            gh issue edit $ISSUE_NUMBER --add-label "posted" --remove-label "editar" || true
+            gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
           elif [[ "$ACTION_TYPE" == "reopened" ]]; then
             OPERATION="editar"
             gh issue edit $ISSUE_NUMBER --add-label "editar" --remove-label "arquivado" || true
@@ -73,7 +73,7 @@ jobs:
             gh issue edit $ISSUE_NUMBER --remove-label "editar" || true
           elif [[ "$ACTION_TYPE" == "opened" && -n "$HAS_POSTED_LABEL" ]]; then
             OPERATION="postar"
-          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "posted" ]]; then
+          elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "post" ]]; then
             OPERATION="postar"
           elif [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POSTED_LABEL" || -n "$HAS_EDITAR_LABEL") ]]; then
             OPERATION="editar"
@@ -129,7 +129,7 @@ jobs:
               gh issue comment $ISSUE_NUMBER --body "Post gerado com sucesso! O deploy foi iniciado."
               if [[ "$ACTION_TYPE" == "edited" ]]; then
                 gh issue comment $ISSUE_NUMBER --body "post atualizado"
-                gh issue edit $ISSUE_NUMBER --add-label "posted" --remove-label "editar" || true
+                gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
                 gh issue close $ISSUE_NUMBER --reason "completed"
               else
                 gh issue comment $ISSUE_NUMBER --body "Post gerado com sucesso! O deploy foi iniciado."
@@ -139,7 +139,7 @@ jobs:
             echo "O conteúdo é idêntico. Nenhuma mudança para comitar."
             if [[ "$ACTION_TYPE" == "edited" ]]; then
               gh issue comment $ISSUE_NUMBER --body "post atualizado"
-              gh issue edit $ISSUE_NUMBER --add-label "posted" --remove-label "editar" || true
+              gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar" || true
               gh issue close $ISSUE_NUMBER --reason "completed"
             fi
           fi
