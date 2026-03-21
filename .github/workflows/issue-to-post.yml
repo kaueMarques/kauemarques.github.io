@@ -41,6 +41,8 @@ jobs:
           # Verifica se as tags existem na issue
           HAS_POSTED_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
           HAS_EDITAR_LABEL=$(echo "$LABELS" | grep -i '"editar"' || true)
+          HAS_DELETED_LABEL=$(echo "$LABELS" | grep -i '"deleted"' || true)
+          HAS_GERENCIA_LABEL=$(echo "$LABELS" | grep -i '"action-gerencia-blog"' || true)
           OPERATION=""
           
           # 1. Determina a ação com base nos gatilhos
@@ -48,7 +50,7 @@ jobs:
             OPERATION="deletar"
           elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && -n "$HAS_POSTED_LABEL" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "post" ]]; then
             OPERATION="postar"
-          elif [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POSTED_LABEL" || -n "$HAS_EDITAR_LABEL") ]]; then
+          elif [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POSTED_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
             OPERATION="editar"
           else
             echo "Nenhuma ação mapeada para este fluxo. Ignorando."
