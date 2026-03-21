@@ -48,14 +48,14 @@ jobs:
             OPERATION="deletar"
           elif [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "post" ]]; then
             OPERATION="deletar"
-        elif [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]]; then
-          OPERATION="deletar"
-          # Tenta excluir a issue fisicamente (falhará se o token não tiver escopo admin). Fallback: arquivar e fechar.
-          gh issue delete $ISSUE_NUMBER --yes || {
-            gh issue reopen $ISSUE_NUMBER || true
-            gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "post" --remove-label "editar" || true
-            gh issue close $ISSUE_NUMBER --reason "not planned"
-          }
+          elif [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]]; then
+            OPERATION="deletar"
+            # Tenta excluir a issue fisicamente (falhará se o token não tiver escopo admin). Fallback: arquivar e fechar.
+            gh issue delete $ISSUE_NUMBER --yes || {
+              gh issue reopen $ISSUE_NUMBER || true
+              gh issue edit $ISSUE_NUMBER --add-label "arquivado" --remove-label "post" --remove-label "editar" || true
+              gh issue close $ISSUE_NUMBER --reason "not planned"
+            }
           elif [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "exclusao" ]]; then
             OPERATION="deletar"
             # Reabre a issue, troca a tag para arquivado e fecha como "not planned"
@@ -79,9 +79,9 @@ jobs:
             OPERATION="editar"
             gh issue reopen $ISSUE_NUMBER || true
             gh issue edit $ISSUE_NUMBER --add-label "editar" || true
-        elif [[ "$ACTION_TYPE" == "created" ]]; then
-          echo "Comentário não contém comandos válidos. Ignorando."
-          exit 0
+          elif [[ "$ACTION_TYPE" == "created" ]]; then
+            echo "Comentário não contém comandos válidos. Ignorando."
+            exit 0
           else
             echo "Nenhuma ação mapeada para este fluxo. Ignorando."
             exit 0
@@ -90,7 +90,7 @@ jobs:
           # Comentário inicial informando o que está sendo feito (se a issue não foi apagada)
           if [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]]; then
             gh issue comment $ISSUE_NUMBER --body "\$processar"
-        elif [[ "$OPERATION" != "deletar" && "$ACTION_TYPE" != "deleted" && "$ACTION_TYPE" != "created" ]]; then
+          elif [[ "$OPERATION" != "deletar" && "$ACTION_TYPE" != "deleted" && "$ACTION_TYPE" != "created" ]]; then
             gh issue comment $ISSUE_NUMBER --body "Processando post... Ação em execução: **$OPERATION**"
           fi
           
