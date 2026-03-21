@@ -5,6 +5,8 @@ publishDate: "2026-03-21T01:19:47Z"
 tags: ["issue", "github"]
 ---
 
+..
+
 O Estilo Neoclássico surgiu na Europa em meados do século XVIII como uma resposta ao excesso decorativo e à assimetria do Barroco e do Rococó. O movimento buscou resgatar a ordem, a sobriedade e a racionalidade da Antiguidade Clássica, fortemente influenciado pelo pensamento Iluminista e pelas escavações arqueológicas de Pompeia e Herculano.
 Fundamentos Estéticos
 A base do Neoclassicismo é o racionalismo. Diferente dos estilos anteriores, que focavam na emoção e no drama, este estilo prioriza o equilíbrio e a clareza formal. Seus princípios incluem:
