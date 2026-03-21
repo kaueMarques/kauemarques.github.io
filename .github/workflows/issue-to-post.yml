@@ -23,7 +23,7 @@ jobs:
       - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      - name: Processar Issue e Gerar Post
+      - name: = ACTION GERENCIAMENTO DE POSTAGEM =
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
