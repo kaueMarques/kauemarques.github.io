@@ -72,6 +72,6 @@ export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
 		return `[data-theme="${theme.name}"]`;
 	},
 	// One dark, one light theme => https://expressive-code.com/guides/themes/#available-themes
-	themes: ["gruvbox-dark", "github-light"],
+	themes: ["gruvbox-dark-medium", "github-light"],
 	useThemedScrollbars: false,
 };
