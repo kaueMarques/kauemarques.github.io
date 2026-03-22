@@ -96,7 +96,8 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 {/* Efeito de Loading (Fade-in) para Imagens globais */}
 <noscript>
 	<style>
-		img {
+		img,
+		iframe {
 			opacity: 1 !important;
 			background: none !important;
 			animation: none !important;
@@ -106,13 +107,14 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 <script>
 	// Compatível com o sistema de View Transitions do Astro
 	document.addEventListener("astro:page-load", () => {
-		const images = document.querySelectorAll("img");
-		images.forEach((img) => {
-			if (img.complete) {
-				img.classList.add("is-loaded");
+		const elements = document.querySelectorAll("img, iframe");
+		elements.forEach((el) => {
+			// Imagens possuem a propriedade 'complete'. Iframes dependem apenas do evento 'load'
+			if (el.tagName === "IMG" && el.complete) {
+				el.classList.add("is-loaded");
 			} else {
-				img.addEventListener("load", () => {
-					img.classList.add("is-loaded");
+				el.addEventListener("load", () => {
+					el.classList.add("is-loaded");
 				});
 			}
 		});

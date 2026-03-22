@@ -74,7 +74,7 @@
 		0% { background-position: center, 200% 0; }
 		100% { background-position: center, -200% 0; }
 	}
-	img:not(.is-loaded) {
+	img:not(.is-loaded), iframe:not(.is-loaded) {
 		opacity: 0.6;
 		background-image: 
 			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23D9C5A3' font-family='system-ui,%20sans-serif' font-size='12px' font-style='italic'%3Ecarregando elemento...%3C/text%3E%3C/svg%3E"),
@@ -84,7 +84,7 @@
 		animation: skeleton-shimmer 1.5s infinite linear;
 		color: transparent; /* Oculta o texto alternativo/ícone quebrado temporariamente */
 	}
-	img.is-loaded {
+	img.is-loaded, iframe.is-loaded {
 		opacity: 1;
 		background: none;
 	}
@@ -93,11 +93,11 @@
 	a {
 		transition: color 0.3s ease-in-out, text-decoration-color 0.3s ease-in-out;
 	}
-	img, svg {
+	img, svg, iframe {
 		filter: sepia(20%) brightness(90%);
 		transition: opacity 0.5s ease-in-out, filter 0.3s ease;
 	}
-	img:hover, svg:hover {
+	img:hover, svg:hover, iframe:hover {
 		filter: sepia(0%) brightness(100%);
 	}
 }
