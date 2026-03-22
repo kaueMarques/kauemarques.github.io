@@ -115,7 +115,6 @@ jobs:
               echo "tags: ${TAGS_ARRAY}"
               echo "---"
               echo ""
-              printf "%s\n" "$CLEAN_BODY"
               printf "%s\n" "$PROCESSED_BODY"
             } > "$FILE_PATH"
           fi
