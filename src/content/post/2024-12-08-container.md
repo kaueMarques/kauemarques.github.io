@@ -2,8 +2,7 @@
 title: "Video 2: container"
 description: "<iframe width='560' height='315' src='https://www.youtube.com/embed/EwisnbnqAJM?si=lf1-9RxtMSO3MddH'..."
 publishDate: "2024-12-08"
-tags:
-  - container
+tags: ["container", "aws"]
 ---
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/EwisnbnqAJM?si=lf1-9RxtMSO3MddH" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  

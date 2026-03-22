@@ -2,8 +2,7 @@
 title: "Uma pincelada de spring batch"
 description: "O Spring Batch é um framework robusto para processamento de grandes volumes de dados em Java. Ele é..."
 publishDate: "2024-12-15"
-tags:
-  - gh-action
+tags: ["batch","java"]
 ---
 
 O Spring Batch é um framework robusto para processamento de grandes volumes de dados em Java. Ele é projetado para gerenciar e executar tarefas de batch de maneira eficiente e escalável.

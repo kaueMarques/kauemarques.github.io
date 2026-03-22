@@ -2,8 +2,7 @@
 title: "Lições do Metrô: Como a Organização Impulsiona a Alta Performance - Parte 1"
 description: "Durante o nosso dia a dia, podemos observar que muitas situações seguem padrões específicos. No enta..."
 publishDate: "2024-12-18"
-tags:
-  - gh-action
+tags: ["desempenho", "java"]
 ---
 
 Durante o nosso dia a dia, podemos observar que muitas situações seguem padrões específicos. No entanto, em meio à correria da rotina, muitas pessoas insistem em ignorá-los, o que pode acabar gerando atrasos e ineficiências.

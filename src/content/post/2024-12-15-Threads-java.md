@@ -2,8 +2,7 @@
 title: "Threads java"
 description: "# Threads em Java  Java é uma linguagem que oferece suporte robusto para programação concorrente atr..."
 publishDate: "2024-12-15"
-tags:
-  - gh-action
+tags: ["java", "threads"]
 ---
 
 # Threads em Java
