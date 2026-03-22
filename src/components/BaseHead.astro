@@ -92,3 +92,27 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 }
 
 <meta content={Astro.generator} name="generator" />
+
+{/* Efeito de Loading (Fade-in) para Imagens globais */}
+<noscript>
+	<style>
+		img {
+			opacity: 1 !important;
+		}
+	</style>
+</noscript>
+<script>
+	// Compatível com o sistema de View Transitions do Astro
+	document.addEventListener("astro:page-load", () => {
+		const images = document.querySelectorAll("img");
+		images.forEach((img) => {
+			if (img.complete) {
+				img.classList.add("is-loaded");
+			} else {
+				img.addEventListener("load", () => {
+					img.classList.add("is-loaded");
+				});
+			}
+		});
+	});
+</script>

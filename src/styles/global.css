@@ -69,13 +69,21 @@
 		max-width: 100%;
 	}
 
+	/* Imagens iniciam escondidas para aguardar o carregamento total */
+	img {
+		opacity: 0;
+	}
+	img.is-loaded {
+		opacity: 1;
+	}
+
 	/* Transições suaves e estética envelhecida */
 	a {
 		transition: color 0.3s ease-in-out, text-decoration-color 0.3s ease-in-out;
 	}
 	img, svg {
 		filter: sepia(20%) brightness(90%);
-		transition: filter 0.3s ease;
+		transition: opacity 0.5s ease-in-out, filter 0.3s ease;
 	}
 	img:hover, svg:hover {
 		filter: sepia(0%) brightness(100%);
