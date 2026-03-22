@@ -13,4 +13,6 @@ Todavia, o diálogo com mentes próximas trouxe à tona a importância dos pilar
 
 Nesse refúgio, a música atua como uma sinfonia de ideias, permitindo que a mente transcenda o espaço físico e contemple as fronteiras entre o trabalho e o ser. No domínio da tecnologia, encontro minha própria forma de arte. Codar, para o entusiasta, é um ritual estético, um prazer que acalma as tempestades do dia a dia.
 
+<br>
+
 <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/56oReVXIfUO9xkX7pHmEU0" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
