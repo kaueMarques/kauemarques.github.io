@@ -109,9 +109,14 @@
 	max-width: 100%; /* Mantém o padrão no Mobile */
 }
 
-/* Garante um 'corredor' de 300px na direita para que o Table of Contents não seja esmagado no PC */
+/* Garante que o texto principal e o Table of Contents dividam o espaço fluidamente no PC */
 @media (min-width: 1024px) {
 	.prose {
-		max-width: calc(100% - 300px) !important;
+		max-width: 85% !important; /* O texto ocupa 85% do bloco */
+	}
+	
+	aside {
+		width: 15% !important; /* O Table of Contents ocupa o restante do espaço */
+		min-width: 160px; /* Proteção para não esmagar as palavras do índice */
 	}
 }
