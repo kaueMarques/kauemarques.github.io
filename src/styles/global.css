@@ -21,6 +21,7 @@
 		color-scheme: light dark;
 		accent-color: var(--color-accent);
 		scrollbar-gutter: stable;
+		overflow-x: hidden; /* Trava a rolagem horizontal na raiz */
 
 		&[data-theme="light"] {
 			color-scheme: light;
@@ -36,6 +37,10 @@
 			--color-quote: #F5E8C7;             /* Citações */
 			--color-surface: #3D2B1F;           /* Fundo Secundário */
 		}
+	}
+
+	body {
+		overflow-x: hidden; /* Garante que elementos filhos não expandam a tela para os lados */
 	}
 
 	@media (min-width: 768px) {
