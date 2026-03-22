@@ -38,14 +38,12 @@ jobs:
         run: |
           FILE_PATH="src/content/post/postid-${ISSUE_NUMBER}.md"
           
-          # Verifica se as tags existem na issue
           HAS_POSTED_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
           HAS_EDITAR_LABEL=$(echo "$LABELS" | grep -i '"editar"' || true)
           HAS_DELETED_LABEL=$(echo "$LABELS" | grep -i '"deleted"' || true)
           HAS_GERENCIA_LABEL=$(echo "$LABELS" | grep -i '"action-gerencia-blog"' || true)
           OPERATION=""
           
-          # 1. Determina a ação com base nos gatilhos
           if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && "$LABEL_NAME" == "post" ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
             OPERATION="deletar"
           elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && -n "$HAS_POSTED_LABEL" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "post" ]]; then
@@ -61,7 +59,6 @@ jobs:
             gh issue comment $ISSUE_NUMBER --body "⏳ Excluindo postagem..." || true
           fi
           
-          # 2. Atualiza estado e labels na interface do GitHub (Sem fechar ainda)
           if [[ "$ACTION_TYPE" != "deleted" ]]; then
             if [[ "$OPERATION" == "deletar" ]]; then
               gh issue edit $ISSUE_NUMBER --add-label "deleted,action-gerencia-blog" --remove-label "post,editar,arquivado,exclusao,delete,publicado" || true
@@ -73,14 +70,12 @@ jobs:
             fi
           fi
 
-          # 3. Cria, edita ou deleta o arquivo na pasta do blog localmente
           if [[ "$OPERATION" == "deletar" ]]; then
             rm -f "$FILE_PATH"
           else
             mkdir -p src/content/post
             SAFE_TITLE="${ISSUE_TITLE//\"/\\\"}"
             
-            # Extrai as tags a partir de hashtags no texto e formata para o array do blog
             EXTRACTED_TAGS=$(printf "%s\n" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
             if [ -z "$EXTRACTED_TAGS" ]; then
               TAGS_ARRAY="[]"
@@ -88,23 +83,17 @@ jobs:
               TAGS_ARRAY="[${EXTRACTED_TAGS}]"
             fi
             
-            # Limpa as hashtags do texto para que não apareçam na leitura
             CLEAN_BODY=$(printf "%s\n" "$ISSUE_BODY" | sed -E 's/(^|[[:space:]])#[a-zA-Z0-9_-]+//g')
             
-            # Converte marcadores $youtube(URL) e $spotify(URL) para iframes HTML
-            # 1. YouTube: Transforma links watch?v= e youtu.be para a versão /embed/ e depois aplica o iframe
             PROCESSED_BODY=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's@\$youtube\(https://www\.youtube\.com/watch\?v=([^)&]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
             PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$youtube\(https://youtu\.be/([^)?]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
             PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$youtube\(([^)]+)\)@<iframe width="100%" height="315" src="\1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>@g')
 
-            # 2. Spotify: Transforma links padroes para a versão /embed/ e depois aplica o iframe
             PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$spotify\(https://open\.spotify\.com/(track|album|playlist|artist|show|episode)/([^?)]+)[^)]*\)@\$spotify(https://open.spotify.com/embed/\1/\2)@g')
             PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$spotify\(([^)]+)\)@<iframe style="border-radius:12px" src="\1" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>@g')
             
-            # Limpa os marcadores de media da descrição para manter o texto puro no preview do post
             DESC_SOURCE=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's/\$(youtube|spotify)\([^)]+\)//g')
 
-            # Pega os primeiros 140 caracteres da descrição limpa, remove quebras de linha e escapa aspas
             POST_DESCRIPTION=$(printf "%s" "$DESC_SOURCE" | tr '\n' ' ' | tr '\r' ' ' | sed 's/"/\\"/g' | cut -c 1-140)
 
             {
@@ -119,7 +108,6 @@ jobs:
             } > "$FILE_PATH"
           fi
           
-          # 4. Comita as alterações e faz o push
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global pull.rebase true
@@ -130,14 +118,12 @@ jobs:
             git pull origin $(git branch --show-current)
             git push
             
-            # Aciona a esteira de deploy
             if [[ "$ACTION_TYPE" == "deleted" ]]; then
               gh workflow run deploy.yml -f operation=$OPERATION
             else
               gh workflow run deploy.yml -f issue_number=$ISSUE_NUMBER -f operation=$OPERATION
             fi
             
-            # 5. Comentário final na Issue informando que funcionou
             if [[ "$ACTION_TYPE" != "deleted" ]]; then
               if [[ "$OPERATION" == "deletar" ]]; then
                 gh issue comment $ISSUE_NUMBER --body "🗑️ Post excluído com sucesso do blog!" || true
@@ -150,7 +136,6 @@ jobs:
             fi
           else
             echo "O conteúdo é idêntico. Nenhuma mudança para comitar."
-            # Se for uma esteira redundante, fecha a issue direto sem gerar spam de comentários
             if [[ "$ACTION_TYPE" != "deleted" ]]; then
               if [[ "$OPERATION" == "editar" || "$OPERATION" == "postar" ]]; then
                  gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar,deleted" || true
@@ -162,7 +147,6 @@ jobs:
             exit 0
           fi
 
-          # 6. Lógica de fechamento aguardando 1 minuto
           if [[ "$ACTION_TYPE" != "deleted" ]]; then
             ISSUE_STATE=$(gh issue view $ISSUE_NUMBER --json state -q .state || echo "CLOSED")
             if [[ "$ISSUE_STATE" == "OPEN" ]]; then
@@ -177,7 +161,6 @@ jobs:
                 gh issue close $ISSUE_NUMBER --reason "completed" || true
               fi
             else
-              # Se já fechada por algum motivo, apenas corrige a tag
               if [[ "$OPERATION" == "editar" ]]; then
               gh issue edit $ISSUE_NUMBER --add-label "post" --remove-label "editar,deleted" || true
               fi
