@@ -38,6 +38,12 @@
 		}
 	}
 
+	@media (min-width: 768px) {
+		body {
+			max-width: 1024px !important; 
+		}
+	}
+
 	:target {
 		scroll-margin-block: 5ex;
 	}
@@ -94,4 +100,6 @@
 	--tw-prose-links: var(--color-global-text);
 	--tw-prose-quotes: var(--color-quote);
 	--tw-prose-th-borders: rgba(166, 124, 82, 0.3);
+
+	max-width: 85ch;
 }
