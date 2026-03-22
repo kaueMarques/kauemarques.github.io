@@ -1,5 +1,5 @@
 ---
-title: "[EVENTO]"
+title: "Sou java 18/05/2026"
 description: "### Relato do Evento  dia sensacional, principalmente podendo levar o grande [Luiz Guilherme Moassab](https://www.linkedin.com/in/luiz-guilh..."
 publishDate: "2026-03-22T20:41:04Z"
 tags: ["evento"]
