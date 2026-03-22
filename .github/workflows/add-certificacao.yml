@@ -18,40 +18,42 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Ler dados da Issue e atualizar JSON
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const path = 'src/data/certificacoes.json';
-            
-            const body = context.payload.issue.body;
-            
-            // Extrai as seções de texto do corpo do Markdown usando expressões regulares (RegEx)
-            const extractSection = (header) => {
-              const regex = new RegExp(`### \\s*${header}\\s*\\n+([\\s\\S]*?)(?:\\n### |$)`, 'i');
-              const match = body.match(regex);
-              if (match) {
-                const val = match[1].trim();
-                if (val === '_No response_') return null; // Quando um campo opcional não é preenchido
-                return val;
-              }
-              return null;
-            };
-            
-            const name = extractSection('Nome da Certificação');
-            const image = extractSection('URL da Imagem \\(Badge\\)');
-            const link = extractSection('Link de Validação');
-            const description = extractSection('Descrição Resumida');
-            
-            if (!name || !image || !description) {
-              core.setFailed('Campos obrigatórios ausentes na issue.');
-              return;
-            }
-            
-            const certs = JSON.parse(fs.readFileSync(path, 'utf8'));
-            certs.push({ image, link, name, description });
-            
-            fs.writeFileSync(path, JSON.stringify(certs, null, 2) + '\n');
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          python3 -c "
+          import os, json, re, sys
+          
+          body = os.environ.get('ISSUE_BODY', '')
+          path = 'src/data/certificacoes.json'
+          
+          def extract_section(header):
+              pattern = re.compile(f'### \s*{header}\s*\n+([\s\S]*?)(?:\n### |$)', re.IGNORECASE)
+              match = pattern.search(body)
+              if match:
+                  val = match.group(1).strip()
+                  if val == '_No response_': return None
+                  return val
+              return None
+          
+          name = extract_section(r'Nome da Certificação')
+          image = extract_section(r'URL da Imagem \(Badge\)')
+          link = extract_section(r'Link de Validação')
+          description = extract_section(r'Descrição Resumida')
+          
+          if not name or not image or not description:
+              print('Erro: Campos obrigatórios ausentes na issue.')
+              sys.exit(1)
+          
+          with open(path, 'r', encoding='utf-8') as f:
+              certs = json.load(f)
+          
+          certs.append({'image': image, 'link': link, 'name': name, 'description': description})
+          
+          with open(path, 'w', encoding='utf-8') as f:
+              json.dump(certs, f, indent=2, ensure_ascii=False)
+              f.write('\n')
+          "
             
       - name: Commit e Deploy
         env:
