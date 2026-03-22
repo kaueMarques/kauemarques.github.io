@@ -10,9 +10,7 @@ import { collectionDateSort } from "@/utils/date";
 // Posts
 const MAX_POSTS = 3;
 const allPosts = await getAllPosts();
-const allPostsByDate = allPosts
-	.filter((p) => !p.data.tags?.includes("evento"))
-	.sort(collectionDateSort) as CollectionEntry<"post">[];
+const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"post">[];
 const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
 
 // Pinned Posts, set to a max of 3;

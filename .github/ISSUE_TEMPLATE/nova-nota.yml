@@ -1,0 +1,17 @@
+name: Nova Nota
+description: Registrar um pensamento rápido na aba "Notas"
+title: "[NOTA] "
+labels: ["note"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Dica:** O título desta Issue será ignorado no site, pois notas são pensamentos curtos e diretos sem título.
+  - type: textarea
+    id: relato
+    attributes:
+      label: Pensamento
+      description: "Escreva sua nota. Você pode formatar o texto, usar links e adicionar #hashtags no texto para criar as tags."
+      placeholder: "Hoje eu aprendi que..."
+    validations:
+      required: true

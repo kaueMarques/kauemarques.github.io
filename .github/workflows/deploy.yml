@@ -65,13 +65,22 @@ jobs:
         run: |
           if [[ "$ENTITY_TYPE" == "evento" ]]; then
             PREFIX="eventid"
+            URL_PATH="eventos"
+          elif [[ "$ENTITY_TYPE" == "note" ]]; then
+            PREFIX="noteid"
+            URL_PATH="notes"
           else
             PREFIX="postid"
+            URL_PATH="posts"
           fi
           
           if [[ "$OPERATION" == "deletar" ]]; then
             gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado! A exclusão foi refletida no site."
           else
-            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado com sucesso! Acesse em: https://kauemarques.github.io/posts/$PREFIX-$ISSUE_NUMBER/"
+            if [[ "$ENTITY_TYPE" == "note" ]]; then
+              gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado com sucesso! Acesse em: https://kauemarques.github.io/$URL_PATH/"
+            else
+              gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado com sucesso! Acesse em: https://kauemarques.github.io/$URL_PATH/$PREFIX-$ISSUE_NUMBER/"
+            fi
             gh issue edit $ISSUE_NUMBER --repo ${{ github.repository }} --add-label "publicado" || true
           fi

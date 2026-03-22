@@ -5,34 +5,41 @@ set -e
 setup_variables() {
   HAS_POST_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
   HAS_EVENTO_LABEL=$(echo "$LABELS" | grep -i '"evento"' || true)
+  HAS_NOTE_LABEL=$(echo "$LABELS" | grep -i '"note"' || true)
   HAS_EDITAR_LABEL=$(echo "$LABELS" | grep -i '"editar"' || true)
   HAS_DELETED_LABEL=$(echo "$LABELS" | grep -i '"deleted"' || true)
   HAS_GERENCIA_LABEL=$(echo "$LABELS" | grep -i '"action-gerencia-blog"' || true)
 
   ENTITY_TYPE="post"
   PREFIX="postid"
+  DIR_NAME="post"
 
   if [[ -n "$HAS_EVENTO_LABEL" || "$LABEL_NAME" == "evento" ]]; then
     ENTITY_TYPE="evento"
     PREFIX="eventid"
+    DIR_NAME="evento"
+  elif [[ -n "$HAS_NOTE_LABEL" || "$LABEL_NAME" == "note" ]]; then
+    ENTITY_TYPE="note"
+    PREFIX="noteid"
+    DIR_NAME="note"
   fi
 
-  FILE_PATH="src/content/post/${PREFIX}-${ISSUE_NUMBER}.md"
+  FILE_PATH="src/content/${DIR_NAME}/${PREFIX}-${ISSUE_NUMBER}.md"
   OPERATION=""
 }
 
 determine_operation() {
-  if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
+  if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" || "$LABEL_NAME" == "note" ) ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
     OPERATION="deletar"
     return
   fi
 
-  if [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" ) ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]]; then
+  if [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_NOTE_LABEL" ) ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" || "$LABEL_NAME" == "note" ) ]]; then
     OPERATION="postar"
     return
   fi
 
-  if [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
+  if [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_NOTE_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
     OPERATION="editar"
     return
   fi
@@ -49,7 +56,7 @@ update_github_issue() {
   case "$OPERATION" in
     deletar)
       gh issue comment "$ISSUE_NUMBER" --body "⏳ Excluindo ${ENTITY_TYPE}..." || true
-      gh issue edit "$ISSUE_NUMBER" --add-label "deleted,action-gerencia-blog" --remove-label "post,evento,editar,arquivado,exclusao,delete,publicado" || true
+      gh issue edit "$ISSUE_NUMBER" --add-label "deleted,action-gerencia-blog" --remove-label "post,evento,note,editar,arquivado,exclusao,delete,publicado" || true
       ;;
     postar)
       gh issue edit "$ISSUE_NUMBER" --add-label "${ENTITY_TYPE},action-gerencia-blog" --remove-label "editar,deleted,arquivado,exclusao,delete" || true
@@ -63,12 +70,19 @@ update_github_issue() {
 
 process_file() {
   if [[ "$OPERATION" == "deletar" ]]; then
-    git rm --ignore-unmatch "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md" 2>/dev/null || true
-    rm -f "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md"
+    git rm --ignore-unmatch "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/evento/eventid-${ISSUE_NUMBER}.md" "src/content/note/noteid-${ISSUE_NUMBER}.md" 2>/dev/null || true
+    rm -f "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/evento/eventid-${ISSUE_NUMBER}.md" "src/content/note/noteid-${ISSUE_NUMBER}.md"
     return
   fi
 
-  mkdir -p src/content/post
+  # Move o evento antigo para a nova pasta caso ele seja editado
+  if [[ "$ENTITY_TYPE" == "evento" ]]; then
+    git rm "src/content/post/eventid-${ISSUE_NUMBER}.md" 2>/dev/null || true
+  elif [[ "$ENTITY_TYPE" == "note" ]]; then
+    git rm "src/content/post/noteid-${ISSUE_NUMBER}.md" 2>/dev/null || true
+  fi
+
+  mkdir -p "src/content/${DIR_NAME}"
   SAFE_TITLE="${ISSUE_TITLE//\"/\\\"}"
   
   EXTRACTED_TAGS=$(printf "%s\n" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
@@ -102,7 +116,9 @@ process_file() {
 
   {
     echo "---"
-    echo "title: \"${SAFE_TITLE}\""
+    if [[ "$ENTITY_TYPE" != "note" ]]; then
+      echo "title: \"${SAFE_TITLE}\""
+    fi
     echo "description: \"${POST_DESCRIPTION}...\""
     echo "publishDate: \"${ISSUE_DATE}\""
     echo "tags: ${TAGS_ARRAY}"

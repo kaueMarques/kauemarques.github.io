@@ -1,14 +1,11 @@
 ---
-import { type CollectionEntry } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 import PostPreview from "@/components/blog/PostPreview.astro";
-import { getAllPosts } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 
-const allPosts = await getAllPosts();
-const eventos = allPosts
-	.filter((p) => p.data.tags?.includes("evento"))
-	.sort(collectionDateSort) as CollectionEntry<"post">[];
+const allEvents = await getCollection("evento");
+const eventos = allEvents.sort(collectionDateSort) as unknown as CollectionEntry<"post">[];
 ---
 
 <PageLayout meta={{ title: "Eventos", description: "Eventos, congressos e palestras" }}>
