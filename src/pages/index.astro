@@ -8,9 +8,11 @@ import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 
 // Posts
-const MAX_POSTS = 10;
+const MAX_POSTS = 3;
 const allPosts = await getAllPosts();
-const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"post">[];
+const allPostsByDate = allPosts
+	.filter((p) => !p.data.tags?.includes("evento"))
+	.sort(collectionDateSort) as CollectionEntry<"post">[];
 const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
 
 // Pinned Posts, set to a max of 3;
@@ -61,6 +63,9 @@ const latestNotes = allNotes
 				))
 			}
 		</ul>
+		<div class="mt-6 text-right">
+			<a class="cactus-link inline-block" href="/posts/">Ver mais postagens &rarr;</a>
+		</div>
 	</section>
 	{
 		latestNotes.length > 0 && (

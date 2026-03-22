@@ -49,7 +49,8 @@ if [[ "$ACTION_TYPE" != "deleted" ]]; then
 fi
 
 if [[ "$OPERATION" == "deletar" ]]; then
-  rm -f "$FILE_PATH"
+  git rm --ignore-unmatch "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md" 2>/dev/null || true
+  rm -f "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md"
 else
   mkdir -p src/content/post
   SAFE_TITLE="${ISSUE_TITLE//\"/\\\"}"
@@ -97,7 +98,10 @@ fi
 git config --global user.name "github-actions[bot]"
 git config --global user.email "github-actions[bot]@users.noreply.github.com"
 git config --global pull.rebase true
-git add "$FILE_PATH"
+
+if [[ "$OPERATION" != "deletar" ]]; then
+  git add "$FILE_PATH"
+fi
 
 if ! git diff-index --quiet HEAD; then
   git commit -m "chore: $OPERATION $ENTITY_TYPE gerado pela issue #${ISSUE_NUMBER}"
