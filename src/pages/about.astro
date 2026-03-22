@@ -1,6 +1,7 @@
 ---
 import PageLayout from "@/layouts/Base.astro";
 import certificacoes from "../data/certificacoes.json";
+import publicacoes from "../data/publicacoes.json";
 
 const meta = {
 	description: "Sobre Kauê Marques Barbosa - Engenheiro de Software no Itaú Unibanco",
@@ -119,24 +120,31 @@ const meta = {
 		</details>
 
 		<h2>Publicações em congressos</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Congresso</th>
-					<th>Titulo do trabalho</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>CONGRESSO DE INOVAÇÃO, CIÊNCIA E TECNOLOGIA DO IFSP</td>
-					<td
-						><a href="https://ocs.ifsp.edu.br/conict/xivconict/paper/view/9464" target="_blank"
-							>OTIMIZAÇÃO DA MANUTENÇÃO EM SISTEMAS LEGADOS: CASO DE ESTUDO DO ORACLE WEBLOGIC 11G</a
-						></td
-					>
-				</tr>
-			</tbody>
-		</table>
+		<details>
+			<summary><b>clique para ver</b></summary>
+			<table>
+				<thead>
+					<tr>
+						<th>Congresso</th>
+						<th>Titulo do trabalho</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						publicacoes.map((pub) => (
+							<tr>
+								<td>{pub.congresso}</td>
+								<td>
+									<a href={pub.link} target="_blank" rel="noopener noreferrer">
+										{pub.titulo}
+									</a>
+								</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</details>
 
 		<h2>Certificações</h2>
 		<details>
