@@ -1,0 +1,17 @@
+name: Novo Evento
+description: Registrar a participação em um evento na aba "Eventos"
+title: ""
+labels: ["evento"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Dica:** O título desta Issue será exatamente o título que aparecerá como nome do evento no site.
+  - type: textarea
+    id: relato
+    attributes:
+      label: Relato do Evento
+      description: "Descreva sua participação. Você pode formatar o texto, colar imagens diretamente aqui, usar $youtube(URL), $spotify(URL) e adicionar #hashtags no texto para criar as tags."
+      placeholder: "Participei do evento e os principais pontos foram..."
+    validations:
+      required: true
