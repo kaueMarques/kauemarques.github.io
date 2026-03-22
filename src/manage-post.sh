@@ -24,14 +24,21 @@ setup_variables() {
 determine_operation() {
   if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
     OPERATION="deletar"
-  elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" ) ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]]; then
-    OPERATION="postar"
-  elif [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
-    OPERATION="editar"
-  else
-    echo "Nenhuma ação mapeada para este fluxo. Ignorando."
-    exit 0 # Guard clause: Aborta script inteiro se não houver ação
+    return
   fi
+
+  if [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" ) ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]]; then
+    OPERATION="postar"
+    return
+  fi
+
+  if [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
+    OPERATION="editar"
+    return
+  fi
+
+  echo "Nenhuma ação mapeada para este fluxo. Ignorando."
+  exit 0 
 }
 
 update_github_issue() {
@@ -39,15 +46,19 @@ update_github_issue() {
     return
   fi
 
-  if [[ "$OPERATION" == "deletar" ]]; then
-    gh issue comment "$ISSUE_NUMBER" --body "⏳ Excluindo ${ENTITY_TYPE}..." || true
-    gh issue edit $ISSUE_NUMBER --add-label "deleted,action-gerencia-blog" --remove-label "post,evento,editar,arquivado,exclusao,delete,publicado" || true
-  elif [[ "$OPERATION" == "postar" ]]; then
-    gh issue edit $ISSUE_NUMBER --add-label "${ENTITY_TYPE},action-gerencia-blog" --remove-label "editar,deleted,arquivado,exclusao,delete" || true
-  elif [[ "$OPERATION" == "editar" ]]; then
-    gh issue reopen $ISSUE_NUMBER || true
-    gh issue edit $ISSUE_NUMBER --add-label "editar,edited,action-gerencia-blog" --remove-label "deleted,arquivado,exclusao,delete" || true
-  fi
+  case "$OPERATION" in
+    deletar)
+      gh issue comment "$ISSUE_NUMBER" --body "⏳ Excluindo ${ENTITY_TYPE}..." || true
+      gh issue edit "$ISSUE_NUMBER" --add-label "deleted,action-gerencia-blog" --remove-label "post,evento,editar,arquivado,exclusao,delete,publicado" || true
+      ;;
+    postar)
+      gh issue edit "$ISSUE_NUMBER" --add-label "${ENTITY_TYPE},action-gerencia-blog" --remove-label "editar,deleted,arquivado,exclusao,delete" || true
+      ;;
+    editar)
+      gh issue reopen "$ISSUE_NUMBER" || true
+      gh issue edit "$ISSUE_NUMBER" --add-label "editar,edited,action-gerencia-blog" --remove-label "deleted,arquivado,exclusao,delete" || true
+      ;;
+  esac
 }
 
 process_file() {
@@ -62,10 +73,13 @@ process_file() {
   
   EXTRACTED_TAGS=$(printf "%s\n" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
   
-  if [[ "$ENTITY_TYPE" == "evento" && -z "$EXTRACTED_TAGS" ]]; then
-    EXTRACTED_TAGS="\"evento\""
-  elif [[ "$ENTITY_TYPE" == "evento" && "$EXTRACTED_TAGS" != *"\"evento\""* ]]; then
-    EXTRACTED_TAGS="\"evento\",${EXTRACTED_TAGS}"
+  if [[ "$ENTITY_TYPE" == "evento" ]]; then
+    if [[ -z "$EXTRACTED_TAGS" ]]; then
+      EXTRACTED_TAGS="\"evento\""
+    fi
+    if [[ "$EXTRACTED_TAGS" != *"\"evento\""* ]]; then
+      EXTRACTED_TAGS="\"evento\",${EXTRACTED_TAGS}"
+    fi
   fi
 
   if [ -z "$EXTRACTED_TAGS" ]; then
