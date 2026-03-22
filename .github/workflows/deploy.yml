@@ -13,6 +13,11 @@ on:
         description: 'Operação realizada'
         required: false
         type: string
+      entity_type:
+        description: 'Tipo de entidade'
+        required: false
+        type: string
+        default: 'post'
 
 permissions:
   contents: read
@@ -56,10 +61,17 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
           OPERATION: ${{ github.event.inputs.operation }}
+          ENTITY_TYPE: ${{ github.event.inputs.entity_type || 'post' }}
         run: |
+          if [[ "$ENTITY_TYPE" == "evento" ]]; then
+            PREFIX="eventid"
+          else
+            PREFIX="postid"
+          fi
+          
           if [[ "$OPERATION" == "deletar" ]]; then
             gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado! A exclusão foi refletida no site."
           else
-            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado com sucesso! Acesse seu post em: https://kauemarques.github.io/posts/postid-$ISSUE_NUMBER/"
+            gh issue comment $ISSUE_NUMBER --repo ${{ github.repository }} --body "🚀 Deploy finalizado com sucesso! Acesse em: https://kauemarques.github.io/posts/$PREFIX-$ISSUE_NUMBER/"
             gh issue edit $ISSUE_NUMBER --repo ${{ github.repository }} --add-label "publicado" || true
           fi
