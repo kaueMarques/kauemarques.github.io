@@ -40,7 +40,7 @@
 
 	@media (min-width: 768px) {
 		body {
-			max-width: 1024px !important; 
+			max-width: 90% !important; /* Ocupa 90% da tela, deixando 5% de margem de cada lado */
 		}
 	}
 
@@ -101,5 +101,5 @@
 	--tw-prose-quotes: var(--color-quote);
 	--tw-prose-th-borders: rgba(166, 124, 82, 0.3);
 
-	max-width: 85ch;
+	max-width: 100%; /* Expande o conteúdo do blog para acompanhar a nova largura de 90% */
 }
