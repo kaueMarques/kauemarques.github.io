@@ -28,12 +28,13 @@
 
 		&[data-theme="dark"] {
 			color-scheme: dark;
-			--color-global-bg: oklch(23.64% 0.0045 248);
-			--color-global-text: oklch(83.54% 0 264);
-			--color-link: oklch(70.44% 0.1133 349);
-			--color-accent: oklch(70.91% 0.1415 163.7);
-			--color-accent-2: oklch(94.66% 0 0);
-			--color-quote: oklch(94.8% 0.106 136.49);
+			--color-global-bg: #1A130F;         /* Fundo Principal (Couro Escuro) */
+			--color-global-text: #D9C5A3;       /* Texto Principal (Pergaminho) */
+			--color-link: #A67C52;              /* Links e Acentos (Bronze/Latão) */
+			--color-accent: #A67C52;            
+			--color-accent-2: #F5E8C7;          /* Títulos (Brilho de Vela) */
+			--color-quote: #F5E8C7;             /* Citações */
+			--color-surface: #3D2B1F;           /* Fundo Secundário */
 		}
 	}
 
@@ -56,6 +57,18 @@
 	[data-astro-image="constrained"] {
 		max-width: 100%;
 	}
+
+	/* Transições suaves e estética envelhecida */
+	a {
+		transition: color 0.3s ease-in-out, text-decoration-color 0.3s ease-in-out;
+	}
+	img, svg {
+		filter: sepia(20%) brightness(90%);
+		transition: filter 0.3s ease;
+	}
+	img:hover, svg:hover {
+		filter: sepia(0%) brightness(100%);
+	}
 }
 
 @layer components {
@@ -77,8 +90,8 @@
 	--tw-prose-bullets: var(--color-global-text);
 	--tw-prose-code: var(--color-global-text);
 	--tw-prose-headings: var(--color-accent-2);
-	--tw-prose-hr: 0.5px dashed #666;
+	--tw-prose-hr: 1px solid rgba(166, 124, 82, 0.3);
 	--tw-prose-links: var(--color-global-text);
 	--tw-prose-quotes: var(--color-quote);
-	--tw-prose-th-borders: #666;
+	--tw-prose-th-borders: rgba(166, 124, 82, 0.3);
 }

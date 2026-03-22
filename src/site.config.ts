@@ -14,7 +14,7 @@ export const siteConfig: SiteConfig = {
 		},
 	},
 	// Used as the default description meta property and webmanifest description
-	description: "Software Engineer @ Itaú Unibanco | Compartilhar é um presente de Deus",
+	description: "Software Engineer @ Itaú Unibanco | Pensamentos & Tech",
 	// HTML lang property, found in src/layouts/Base.astro L:18 & astro.config.ts L:48
 	lang: "pt-BR",
 	// Meta property, found in src/components/BaseHead.astro L:42

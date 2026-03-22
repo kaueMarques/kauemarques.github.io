@@ -4,6 +4,10 @@ export default {
 	plugins: [require("@tailwindcss/typography")],
 	theme: {
 		extend: {
+			fontFamily: {
+				sans: ["'EB Garamond'", "serif"],
+				serif: ["'Playfair Display'", "serif"],
+			},
 			typography: () => ({
 				DEFAULT: {
 					css: {
@@ -20,7 +24,7 @@ export default {
 							borderLeftWidth: "0",
 						},
 						code: {
-							border: "1px dotted #666",
+							border: "1px dotted rgba(166, 124, 82, 0.4)",
 							borderRadius: "2px",
 						},
 						kbd: {
@@ -29,7 +33,8 @@ export default {
 							},
 						},
 						hr: {
-							borderTopStyle: "dashed",
+							borderTopStyle: "solid",
+							borderTopWidth: "1px",
 						},
 						strong: {
 							fontWeight: "700",
@@ -55,13 +60,13 @@ export default {
 							borderBottomWidth: "none",
 						},
 						tfoot: {
-							borderTop: "1px dashed #666",
+							borderTop: "1px dashed rgba(166, 124, 82, 0.4)",
 						},
 						thead: {
 							borderBottomWidth: "none",
 						},
 						"thead th": {
-							borderBottom: "1px dashed #666",
+							borderBottom: "1px dashed rgba(166, 124, 82, 0.4)",
 							fontWeight: "700",
 						},
 						'th[align="center"], td[align="center"]': {
