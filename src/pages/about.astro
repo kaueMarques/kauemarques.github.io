@@ -1,5 +1,6 @@
 ---
 import PageLayout from "@/layouts/Base.astro";
+import certificacoes from "../data/certificacoes.json";
 
 const meta = {
 	description: "Sobre Kauê Marques Barbosa - Engenheiro de Software no Itaú Unibanco",
@@ -134,6 +135,36 @@ const meta = {
 						></td
 					>
 				</tr>
+			</tbody>
+		</table>
+
+		<h2>Certificações</h2>
+		<table>
+			<thead>
+				<tr>
+					<th align="center">Badge</th>
+					<th>Nome da Certificação</th>
+					<th>Descrição Resumida</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					certificacoes.map((cert) => (
+						<tr>
+							<td align="center">
+								{cert.link ? (
+									<a href={cert.link} target="_blank" rel="noopener noreferrer">
+										<img src={cert.image} alt={cert.name} class="m-0 mx-auto w-24" />
+									</a>
+								) : (
+									<img src={cert.image} alt={cert.name} class="m-0 mx-auto w-24" />
+								)}
+							</td>
+							<td>{cert.name}</td>
+							<td>{cert.description}</td>
+						</tr>
+					))
+				}
 			</tbody>
 		</table>
 	</div>

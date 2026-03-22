@@ -1,0 +1,69 @@
+name: GH - Adicionar Certificação
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  add-cert:
+    if: contains(github.event.issue.labels.*.name, 'certificacao') && github.actor == 'kaueMarques'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Ler dados da Issue e atualizar JSON
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'src/data/certificacoes.json';
+            
+            const body = context.payload.issue.body;
+            
+            // Extrai as seções de texto do corpo do Markdown usando expressões regulares (RegEx)
+            const extractSection = (header) => {
+              const regex = new RegExp(`### \\s*${header}\\s*\\n+([\\s\\S]*?)(?:\\n### |$)`, 'i');
+              const match = body.match(regex);
+              if (match) {
+                const val = match[1].trim();
+                if (val === '_No response_') return null; // Quando um campo opcional não é preenchido
+                return val;
+              }
+              return null;
+            };
+            
+            const name = extractSection('Nome da Certificação');
+            const image = extractSection('URL da Imagem \\(Badge\\)');
+            const link = extractSection('Link de Validação');
+            const description = extractSection('Descrição Resumida');
+            
+            if (!name || !image || !description) {
+              core.setFailed('Campos obrigatórios ausentes na issue.');
+              return;
+            }
+            
+            const certs = JSON.parse(fs.readFileSync(path, 'utf8'));
+            certs.push({ image, link, name, description });
+            
+            fs.writeFileSync(path, JSON.stringify(certs, null, 2) + '\n');
+            
+      - name: Commit e Deploy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/certificacoes.json
+          git commit -m "feat: adiciona certificação via issue #${{ github.event.issue.number }}"
+          git pull origin $(git branch --show-current) --rebase
+          git push
+          
+          gh workflow run deploy.yml
+          gh issue comment ${{ github.event.issue.number }} --body "✅ Certificação adicionada com sucesso! O deploy para o site já foi iniciado."
+          gh issue close ${{ github.event.issue.number }} --reason "completed"

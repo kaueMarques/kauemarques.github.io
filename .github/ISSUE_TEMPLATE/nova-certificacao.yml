@@ -1,0 +1,31 @@
+name: Nova Certificação
+description: Adicionar uma nova certificação ao site
+title: "[CERT] "
+labels: ["certificacao"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Nome da Certificação
+      description: "Ex: AWS Certified Solutions Architect"
+    validations:
+      required: true
+  - type: input
+    id: image
+    attributes:
+      label: URL da Imagem (Badge)
+      description: "URL da imagem ou badge da certificação"
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link de Validação
+      description: "URL para a credencial no Credly, Oracle, etc (opcional)"
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição Resumida
+      description: "Breve descrição sobre os conhecimentos atestados"
+    validations:
+      required: true
