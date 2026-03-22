@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+check_authorization() {
+  if [[ "$GITHUB_ACTOR" != "kaueMarques" ]]; then
+    echo "⛔ ERRO DE SEGURANÇA: Acesso negado. Apenas o owner do repositório possui permissão para executar esta pipeline."
+    exit 1 
+  fi
+}
 
 setup_variables() {
   HAS_POST_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
@@ -87,12 +93,12 @@ process_file() {
   
   EXTRACTED_TAGS=$(printf "%s\n" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
   
-  if [[ "$ENTITY_TYPE" == "evento" ]]; then
+  if [[ "$ENTITY_TYPE" == "evento" ]] || [[ "$ENTITY_TYPE" == "note" ]]; then
     if [[ -z "$EXTRACTED_TAGS" ]]; then
-      EXTRACTED_TAGS="\"evento\""
+      EXTRACTED_TAGS="\"$ENTITY_TYPE\""
     fi
-    if [[ "$EXTRACTED_TAGS" != *"\"evento\""* ]]; then
-      EXTRACTED_TAGS="\"evento\",${EXTRACTED_TAGS}"
+    if [[ "$EXTRACTED_TAGS" != *"\"$ENTITY_TYPE\""* ]]; then
+      EXTRACTED_TAGS="\"$ENTITY_TYPE\",${EXTRACTED_TAGS}"
     fi
   fi
 
@@ -166,6 +172,7 @@ close_issue_if_completed() {
   fi
 }
 
+check_authorization
 setup_variables
 determine_operation
 update_github_issue
