@@ -91,8 +91,21 @@ jobs:
             # Limpa as hashtags do texto para que não apareçam na leitura
             CLEAN_BODY=$(printf "%s\n" "$ISSUE_BODY" | sed -E 's/(^|[[:space:]])#[a-zA-Z0-9_-]+//g')
             
-            # Pega os primeiros 140 caracteres para a descrição, remove quebras de linha e escapa aspas
-            POST_DESCRIPTION=$(printf "%s" "$CLEAN_BODY" | tr '\n' ' ' | tr '\r' ' ' | sed 's/"/\\"/g' | cut -c 1-140)
+            # Converte marcadores $youtube(URL) e $spotify(URL) para iframes HTML
+            # 1. YouTube: Transforma links watch?v= e youtu.be para a versão /embed/ e depois aplica o iframe
+            PROCESSED_BODY=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's|\$youtube\(https://www\.youtube\.com/watch\?v=([^)&]+)[^)]*\)|\$youtube(https://www.youtube.com/embed/\1)|g')
+            PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's|\$youtube\(https://youtu\.be/([^)?]+)[^)]*\)|\$youtube(https://www.youtube.com/embed/\1)|g')
+            PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's|\$youtube\(([^)]+)\)|<iframe width="100%" height="315" src="\1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>|g')
+
+            # 2. Spotify: Transforma links padroes para a versão /embed/ e depois aplica o iframe
+            PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's|\$spotify\(https://open\.spotify\.com/(track|album|playlist|artist|show|episode)/([^?)]+)[^)]*\)|\$spotify(https://open.spotify.com/embed/\1/\2)|g')
+            PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's|\$spotify\(([^)]+)\)|<iframe style="border-radius:12px" src="\1" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>|g')
+            
+            # Limpa os marcadores de media da descrição para manter o texto puro no preview do post
+            DESC_SOURCE=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's/\$(youtube|spotify)\([^)]+\)//g')
+
+            # Pega os primeiros 140 caracteres da descrição limpa, remove quebras de linha e escapa aspas
+            POST_DESCRIPTION=$(printf "%s" "$DESC_SOURCE" | tr '\n' ' ' | tr '\r' ' ' | sed 's/"/\\"/g' | cut -c 1-140)
 
             {
               echo "---"
@@ -103,6 +116,7 @@ jobs:
               echo "---"
               echo ""
               printf "%s\n" "$CLEAN_BODY"
+              printf "%s\n" "$PROCESSED_BODY"
             } > "$FILE_PATH"
           fi
           
