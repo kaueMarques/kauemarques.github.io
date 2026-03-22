@@ -36,7 +36,7 @@ jobs:
           LABEL_NAME: ${{ github.event.label.name }}
           LABELS: ${{ toJSON(github.event.issue.labels.*.name) }}
         run: |
-          FILE_PATH="src/content/post/issue-${ISSUE_NUMBER}.md"
+          FILE_PATH="src/content/post/postid-${ISSUE_NUMBER}.md"
           
           # Verifica se as tags existem na issue
           HAS_POSTED_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
@@ -90,11 +90,14 @@ jobs:
             
             # Limpa as hashtags do texto para que não apareçam na leitura
             CLEAN_BODY=$(printf "%s\n" "$ISSUE_BODY" | sed -E 's/(^|[[:space:]])#[a-zA-Z0-9_-]+//g')
+            
+            # Pega os primeiros 140 caracteres para a descrição, remove quebras de linha e escapa aspas
+            POST_DESCRIPTION=$(printf "%s" "$CLEAN_BODY" | tr '\n' ' ' | tr '\r' ' ' | sed 's/"/\\"/g' | cut -c 1-140)
 
             {
               echo "---"
               echo "title: \"${SAFE_TITLE}\""
-              echo "description: \"Post gerado a partir da issue #${ISSUE_NUMBER}\""
+              echo "description: \"${POST_DESCRIPTION}...\""
               echo "publishDate: \"${ISSUE_DATE}\""
               echo "tags: ${TAGS_ARRAY}"
               echo "---"
