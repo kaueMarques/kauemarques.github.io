@@ -139,33 +139,36 @@ const meta = {
 		</table>
 
 		<h2>Certificações</h2>
-		<table>
-			<thead>
-				<tr>
-					<th align="center">Badge</th>
-					<th>Nome da Certificação</th>
-					<th>Descrição Resumida</th>
-				</tr>
-			</thead>
-			<tbody>
-				{
-					certificacoes.map((cert) => (
-						<tr>
-							<td align="center">
-								{cert.link ? (
-									<a href={cert.link} target="_blank" rel="noopener noreferrer">
+		<details>
+			<summary><b>As certificações que obtive</b></summary>
+			<table>
+				<thead>
+					<tr>
+						<th align="center">Badge</th>
+						<th>Nome da Certificação</th>
+						<th>Descrição Resumida</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						certificacoes.map((cert) => (
+							<tr>
+								<td align="center" class="align-middle">
+									{cert.link ? (
+										<a href={cert.link} target="_blank" rel="noopener noreferrer">
+											<img src={cert.image} alt={cert.name} class="m-0 mx-auto w-24" />
+										</a>
+									) : (
 										<img src={cert.image} alt={cert.name} class="m-0 mx-auto w-24" />
-									</a>
-								) : (
-									<img src={cert.image} alt={cert.name} class="m-0 mx-auto w-24" />
-								)}
-							</td>
-							<td>{cert.name}</td>
-							<td>{cert.description}</td>
-						</tr>
-					))
-				}
-			</tbody>
-		</table>
+									)}
+								</td>
+								<td class="align-middle">{cert.name}</td>
+								<td class="align-middle">{cert.description}</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</details>
 	</div>
 </PageLayout>
