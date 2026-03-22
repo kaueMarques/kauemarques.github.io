@@ -35,4 +35,4 @@ jobs:
           STATE_REASON: ${{ github.event.issue.state_reason }}
           LABEL_NAME: ${{ github.event.label.name }}
           LABELS: ${{ toJSON(github.event.issue.labels.*.name) }}
-        run: bash .github/scripts/manage-post.sh
+        run: bash src/manage-post.sh
