@@ -30,11 +30,12 @@ jobs:
           def extract_section(header):
               pattern = re.compile(f'### \s*{header}\s*\n+([\s\S]*?)(?:\n### |$)', re.IGNORECASE)
               match = pattern.search(body)
-              if match:
-                  val = match.group(1).strip()
-                  if val == '_No response_': return None
-                  return val
-              return None
+              
+              if not match:
+                  return None
+              val = match.group(1).strip()
+              if val == '_No response_': return None
+              return val
           
           name = extract_section(r'Nome da Certificação')
           image = extract_section(r'URL da Imagem \(Badge\)')

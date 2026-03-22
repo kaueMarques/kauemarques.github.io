@@ -1,44 +1,46 @@
 #!/bin/bash
 set -e
 
-HAS_POST_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
-HAS_EVENTO_LABEL=$(echo "$LABELS" | grep -i '"evento"' || true)
-HAS_EDITAR_LABEL=$(echo "$LABELS" | grep -i '"editar"' || true)
-HAS_DELETED_LABEL=$(echo "$LABELS" | grep -i '"deleted"' || true)
-HAS_GERENCIA_LABEL=$(echo "$LABELS" | grep -i '"action-gerencia-blog"' || true)
 
-# Define o tipo de entidade com base na tag atual
-ENTITY_TYPE="post"
-if [[ -n "$HAS_EVENTO_LABEL" || "$LABEL_NAME" == "evento" ]]; then
-  ENTITY_TYPE="evento"
-fi
+setup_variables() {
+  HAS_POST_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
+  HAS_EVENTO_LABEL=$(echo "$LABELS" | grep -i '"evento"' || true)
+  HAS_EDITAR_LABEL=$(echo "$LABELS" | grep -i '"editar"' || true)
+  HAS_DELETED_LABEL=$(echo "$LABELS" | grep -i '"deleted"' || true)
+  HAS_GERENCIA_LABEL=$(echo "$LABELS" | grep -i '"action-gerencia-blog"' || true)
 
-if [[ "$ENTITY_TYPE" == "evento" ]]; then
-  PREFIX="eventid"
-else
+  ENTITY_TYPE="post"
   PREFIX="postid"
-fi
 
-FILE_PATH="src/content/post/${PREFIX}-${ISSUE_NUMBER}.md"
-OPERATION=""
+  if [[ -n "$HAS_EVENTO_LABEL" || "$LABEL_NAME" == "evento" ]]; then
+    ENTITY_TYPE="evento"
+    PREFIX="eventid"
+  fi
 
-if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
-  OPERATION="deletar"
-elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" ) ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]]; then
-  OPERATION="postar"
-elif [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
-  OPERATION="editar"
-else
-  echo "Nenhuma ação mapeada para este fluxo. Ignorando."
-  exit 0
-fi
+  FILE_PATH="src/content/post/${PREFIX}-${ISSUE_NUMBER}.md"
+  OPERATION=""
+}
 
-if [[ "$OPERATION" == "deletar" && "$ACTION_TYPE" != "deleted" ]]; then
-  gh issue comment $ISSUE_NUMBER --body "⏳ Excluindo ${ENTITY_TYPE}..." || true
-fi
+determine_operation() {
+  if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
+    OPERATION="deletar"
+  elif [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" ) ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" ) ]]; then
+    OPERATION="postar"
+  elif [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
+    OPERATION="editar"
+  else
+    echo "Nenhuma ação mapeada para este fluxo. Ignorando."
+    exit 0 # Guard clause: Aborta script inteiro se não houver ação
+  fi
+}
 
-if [[ "$ACTION_TYPE" != "deleted" ]]; then
+update_github_issue() {
+  if [[ "$ACTION_TYPE" == "deleted" ]]; then
+    return
+  fi
+
   if [[ "$OPERATION" == "deletar" ]]; then
+    gh issue comment "$ISSUE_NUMBER" --body "⏳ Excluindo ${ENTITY_TYPE}..." || true
     gh issue edit $ISSUE_NUMBER --add-label "deleted,action-gerencia-blog" --remove-label "post,evento,editar,arquivado,exclusao,delete,publicado" || true
   elif [[ "$OPERATION" == "postar" ]]; then
     gh issue edit $ISSUE_NUMBER --add-label "${ENTITY_TYPE},action-gerencia-blog" --remove-label "editar,deleted,arquivado,exclusao,delete" || true
@@ -46,23 +48,24 @@ if [[ "$ACTION_TYPE" != "deleted" ]]; then
     gh issue reopen $ISSUE_NUMBER || true
     gh issue edit $ISSUE_NUMBER --add-label "editar,edited,action-gerencia-blog" --remove-label "deleted,arquivado,exclusao,delete" || true
   fi
-fi
+}
 
-if [[ "$OPERATION" == "deletar" ]]; then
-  git rm --ignore-unmatch "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md" 2>/dev/null || true
-  rm -f "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md"
-else
+process_file() {
+  if [[ "$OPERATION" == "deletar" ]]; then
+    git rm --ignore-unmatch "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md" 2>/dev/null || true
+    rm -f "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/post/eventid-${ISSUE_NUMBER}.md"
+    return
+  fi
+
   mkdir -p src/content/post
   SAFE_TITLE="${ISSUE_TITLE//\"/\\\"}"
   
   EXTRACTED_TAGS=$(printf "%s\n" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
   
-  if [[ "$ENTITY_TYPE" == "evento" ]]; then
-    if [ -z "$EXTRACTED_TAGS" ]; then
-      EXTRACTED_TAGS="\"evento\""
-    elif [[ "$EXTRACTED_TAGS" != *"\"evento\""* ]]; then
-      EXTRACTED_TAGS="\"evento\",${EXTRACTED_TAGS}"
-    fi
+  if [[ "$ENTITY_TYPE" == "evento" && -z "$EXTRACTED_TAGS" ]]; then
+    EXTRACTED_TAGS="\"evento\""
+  elif [[ "$ENTITY_TYPE" == "evento" && "$EXTRACTED_TAGS" != *"\"evento\""* ]]; then
+    EXTRACTED_TAGS="\"evento\",${EXTRACTED_TAGS}"
   fi
 
   if [ -z "$EXTRACTED_TAGS" ]; then
@@ -93,36 +96,49 @@ else
     echo ""
     printf "%s\n" "$PROCESSED_BODY"
   } > "$FILE_PATH"
-fi
+}
 
-git config --global user.name "github-actions[bot]"
-git config --global user.email "github-actions[bot]@users.noreply.github.com"
-git config --global pull.rebase true
+commit_and_deploy() {
+  git config --global user.name "github-actions[bot]"
+  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+  git config --global pull.rebase true
 
-if [[ "$OPERATION" != "deletar" ]]; then
-  git add "$FILE_PATH"
-fi
+  if [[ "$OPERATION" != "deletar" ]]; then
+    git add "$FILE_PATH"
+  fi
 
-if ! git diff-index --quiet HEAD; then
+  if git diff-index --quiet HEAD; then
+    echo "O conteúdo é idêntico. Nenhuma mudança para comitar."
+    exit 0
+  fi
+
   git commit -m "chore: $OPERATION $ENTITY_TYPE gerado pela issue #${ISSUE_NUMBER}"
-  git pull origin $(git branch --show-current)
+  git pull origin "$(git branch --show-current)"
   git push
   
   if [[ "$ACTION_TYPE" == "deleted" ]]; then
-    gh workflow run deploy.yml -f operation=$OPERATION -f entity_type=$ENTITY_TYPE
+    gh workflow run deploy.yml -f operation="$OPERATION" -f entity_type="$ENTITY_TYPE"
   else
-    gh workflow run deploy.yml -f issue_number=$ISSUE_NUMBER -f operation=$OPERATION -f entity_type=$ENTITY_TYPE
+    gh workflow run deploy.yml -f issue_number="$ISSUE_NUMBER" -f operation="$OPERATION" -f entity_type="$ENTITY_TYPE"
   fi
-else
-  echo "O conteúdo é idêntico. Nenhuma mudança para comitar."
-  exit 0
-fi
+}
 
-if [[ "$ACTION_TYPE" != "deleted" ]]; then
+close_issue_if_completed() {
+  if [[ "$ACTION_TYPE" == "deleted" ]]; then
+    return
+  fi
+
   ISSUE_STATE=$(gh issue view $ISSUE_NUMBER --json state -q .state || echo "CLOSED")
   if [[ "$ISSUE_STATE" == "OPEN" ]]; then
     gh issue comment $ISSUE_NUMBER --body "⏳ A issue será fechada em 1 minuto..." || true
     sleep 60
     gh issue close $ISSUE_NUMBER --reason "completed" || true
   fi
-fi
+}
+
+setup_variables
+determine_operation
+update_github_issue
+process_file
+commit_and_deploy
+close_issue_if_completed
