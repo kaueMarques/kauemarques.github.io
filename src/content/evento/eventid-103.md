@@ -5,7 +5,7 @@ publishDate: "2026-03-22T20:41:04Z"
 tags: ["evento"]
 ---
 
-### Relato do Evento
+### Relato do Evento    
 
 dia sensacional, principalmente podendo levar o grande [Luiz Guilherme Moassab](https://www.linkedin.com/in/luiz-guilherme-moassab-5102463a0/) , e rever velhos amigos como [Leandro Marques](https://www.linkedin.com/in/leandro-marques-34a8a815a/)
 Sem contar com palestrar excelentes principalmente algumas que me fizeram entender forte mente algumas coisas, agradeco a [Alaydes Morais](https://www.linkedin.com/in/alaydesmorais/) e [Leandro Marques](https://www.linkedin.com/in/leandro-marques-34a8a815a/) pois um falou sobre como deve ser, o outro foi um exemplo vivo daquilo que ela disse.
