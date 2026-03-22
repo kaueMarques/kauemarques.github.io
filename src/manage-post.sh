@@ -75,7 +75,6 @@ process_file() {
     return
   fi
 
-  # Move o evento antigo para a nova pasta caso ele seja editado
   if [[ "$ENTITY_TYPE" == "evento" ]]; then
     git rm "src/content/post/eventid-${ISSUE_NUMBER}.md" 2>/dev/null || true
   elif [[ "$ENTITY_TYPE" == "note" ]]; then
@@ -129,7 +128,7 @@ process_file() {
 }
 
 commit_and_deploy() {
-  git config --global user.name "github-actions[bot]"
+  git config --global user.name "GHA-GERENCIA-BLOG"
   git config --global user.email "github-actions[bot]@users.noreply.github.com"
   git config --global pull.rebase true
 
