@@ -1,6 +1,6 @@
 name: Novo Evento
 description: Registrar a participação em um evento na aba "Eventos"
-title: ""
+title: "[EVENTO] "
 labels: ["evento"]
 body:
   - type: markdown
