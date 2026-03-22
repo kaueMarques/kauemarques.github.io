@@ -100,6 +100,38 @@
 	img:hover, svg:hover, iframe:hover {
 		filter: sepia(0%) brightness(100%);
 	}
+
+	/* Lightbox / Zoom em Imagens */
+	.lightbox-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: rgba(26, 19, 15, 0.9); /* Fundo em tom de couro escuro com opacidade */
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 99999;
+		cursor: zoom-out;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+	.lightbox-overlay.active {
+		opacity: 1;
+	}
+	.lightbox-image {
+		max-width: 90vw;
+		max-height: 90vh;
+		border-radius: 8px;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+		filter: none !important; /* Remove o sépia para ver a imagem original */
+		transform: scale(0.95);
+		transition: transform 0.3s ease;
+	}
+	.lightbox-overlay.active .lightbox-image {
+		transform: scale(1);
+	}
 }
 
 @layer components {

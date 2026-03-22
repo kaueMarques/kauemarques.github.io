@@ -117,6 +117,34 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 					el.classList.add("is-loaded");
 				});
 			}
+
+			// Adiciona a lógica de Lightbox (Zoom) apenas para imagens
+			if (el.tagName === "IMG") {
+				// Ignora imagens que já são links (como as de certificações)
+				if (el.closest("a")) return;
+
+				el.style.cursor = "zoom-in";
+				el.addEventListener("click", () => {
+					const overlay = document.createElement("div");
+					overlay.className = "lightbox-overlay";
+
+					const imgClone = document.createElement("img");
+					imgClone.src = el.src;
+					imgClone.className = "lightbox-image";
+
+					overlay.appendChild(imgClone);
+					document.body.appendChild(overlay);
+
+					// Animação de fade-in
+					setTimeout(() => overlay.classList.add("active"), 10);
+
+					// Fecha o lightbox ao clicar fora ou na imagem
+					overlay.addEventListener("click", () => {
+						overlay.classList.remove("active");
+						setTimeout(() => overlay.remove(), 300);
+					});
+				});
+			}
 		});
 	});
 </script>
