@@ -1,10 +1,18 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
+import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
-import { collectionDateSort } from "@/utils/date";
 
-const allEvents = await getCollection("evento");
-const eventos = allEvents.sort(collectionDateSort);
+// 1. Busca os eventos novos na pasta 'evento'
+const rawEvents = (await getCollection("evento")) || [];
+
+// 2. Busca os eventos antigos que ainda estão na pasta de posts
+const allPosts = (await getCollection("post")) || [];
+const legacyEvents = allPosts.filter((p) => p.data.tags?.includes("evento"));
+
+// 3. Junta tudo e converte datas com segurança (à prova de erros de schema)
+const eventos = [...rawEvents, ...legacyEvents].sort((a, b) => {
+	return new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime();
+});
 ---
 
 <PageLayout meta={{ title: "Eventos", description: "Eventos, congressos e palestras" }}>
@@ -13,23 +21,28 @@ const eventos = allEvents.sort(collectionDateSort);
 	<section>
 		<ul class="space-y-4" role="list">
 			{
-				eventos.map((p) => (
-					<li class="grid gap-2 sm:grid-cols-[auto_1fr] sm:gap-x-4">
-						<time
-							datetime={p.data.publishDate.toISOString()}
-							class="min-w-[120px] text-gray-600 dark:text-gray-400"
-						>
-							{p.data.publishDate.toLocaleDateString("pt-BR", {
-								year: "numeric",
-								month: "short",
-								day: "numeric",
-							})}
-						</time>
-						<a href={`/eventos/${p.slug}/`} class="cactus-link" data-astro-prefetch>
-							{p.data.title}
-						</a>
-					</li>
-				))
+				eventos.map((p) => {
+					const eventDate = new Date(p.data.publishDate);
+					const urlPath = p.collection === "evento" ? `/eventos/${p.slug}/` : `/posts/${p.slug}/`;
+
+					return (
+						<li class="grid gap-2 sm:grid-cols-[auto_1fr] sm:gap-x-4">
+							<time
+								datetime={eventDate.toISOString()}
+								class="min-w-[120px] text-gray-600 dark:text-gray-400"
+							>
+								{eventDate.toLocaleDateString("pt-BR", {
+									year: "numeric",
+									month: "short",
+									day: "numeric",
+								})}
+							</time>
+							<a href={urlPath} class="cactus-link" data-astro-prefetch>
+								{p.data.title}
+							</a>
+						</li>
+					);
+				})
 			}
 		</ul>
 	</section>
