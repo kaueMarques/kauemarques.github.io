@@ -2,7 +2,7 @@
 title: "A Busca pelo Saber"
 description: "O conhecimento é como uma pequena chama em um corredor escuro. Ele não serve para ser mostrado, mas para iluminar o caminho de quem prefer..."
 publishDate: "2026-03-23T23:35:55Z"
-tags: []
+tags: ["fe","pensamento"]
 ---
 
 O conhecimento é como uma pequena chama em um corredor escuro. Ele não serve para ser mostrado, mas para iluminar o caminho de quem prefere o silêncio dos livros e o cheiro de papel antigo. Estudar é conversar com vozes do passado e perceber que as grandes dúvidas do mundo ainda são as mesmas.
