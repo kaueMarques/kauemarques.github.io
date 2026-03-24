@@ -19,7 +19,7 @@ Não buscamos o saber por vaidade, mas para entender quem somos. É um caminho f
 Quem busca o saber profundo encontra sentido no que os outros ignoram. É a vontade de enxergar além da superfície e carregar a luz da verdade, por mais pesada que ela seja.
 
 
-> "O coração do sábio adquire o conhecimento, e o ouvido dos sábios busca o saber." 
+> O coração do sábio adquire o conhecimento, e o ouvido dos sábios busca o saber.
 > — **Provérbios 18:15**
 
 <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1wmgnPAD7a8mO42WGfn9dq" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
