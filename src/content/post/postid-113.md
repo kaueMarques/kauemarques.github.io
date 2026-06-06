@@ -19,7 +19,9 @@ Vale a pena assistir, principalmente pela estética e pela sensação que ele pa
 
 Sem contar que para entendimento da obra como um todo, ao meu ver o diretor pré espera que você ja tenha entendido de _liminal spaces_ e da série original dele.
 
-Sem contar uma boa bagagem do contexto backrooms.
+Para uma boa bagagem e melhor proveito da obra, abaixo deixei alguns videos para ter contexto.
+
+É interessante que tenha entendimento de todo contexto prévio. Entretanto, com os quais estão abaixo acredito ser o suficiente.
 
 
 
