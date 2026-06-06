@@ -37,13 +37,13 @@ A muito tempo não assisto algo que me trás essa sensação novamente.
 
 **Nota do filme: **
 
-> Um chá de maça com canela. Num clima frio e aquela sensação de conforto, misturdo a notalgia do VHS, estando acordado as 5 da manhã pois acordou cedo e queria algo confortável.
+> Um chá de maça com canela. Num clima frio e aquela sensação de conforto, misturdo a notalgia do VHS, estando acordado as 5 da manhã pois acordou cedo.
 
 
 
 
 
-Trailer:
+**Trailer:**
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/0HjdiohVOik" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
@@ -51,14 +51,14 @@ Som da estetica:
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/wPOF5FgG3DU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-Base de conhecimento:
+**Base de conhecimento:**
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/s9rA6qN3f6Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-Entendimento de Liminar Spaces:
+**Entendimento de Liminar Spaces:**
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/t9OgLEUjz_g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-Serie original do diretor:
+**Serie original do diretor:**
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/H4dGpz6cnHo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
