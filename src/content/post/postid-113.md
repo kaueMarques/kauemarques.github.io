@@ -53,7 +53,9 @@ A privação sensorial e o isolamento prolongado em ambientes artificiais e repe
 
 *As descrições foram feitas de forma bem superficial e generalistas.
 
+
 Quanto ao desfecho, não espere por uma continuação. A história finalizou muito bem. Se tiver uma sequência, beleza; caso não tenha, está tudo bem também.
+
 
 Há muito tempo não assisto a algo que me traz essa sensação novamente.
 
