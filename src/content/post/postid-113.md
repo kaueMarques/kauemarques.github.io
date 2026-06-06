@@ -29,6 +29,18 @@ Chegou tarde no Brasil, e logo se tornou _mainstream_ foi fácil perceber isso n
 
 Diversas pessoas que assistiram, não tinham uma bagagem forte da obra, tendo por sua vez, não entendendo tudo que a obra quis demonstrar, algo que fez com excelência.
 
+Para o final, não espere ter uma continuação. A história finalizou muito bem.
+
+Se tiver, beleza, caso não tenha. Esta tudo bem também.
+
+A muito tempo não assisto algo que me trás essa sensação novamente.
+
+Nota do filme: 
+
+- Um chá de maça com canela. Com um clima frio e aquela sensação de conforto e nostalgia 
+
+
+
 
 
 Trailer:
