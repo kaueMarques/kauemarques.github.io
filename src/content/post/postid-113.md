@@ -17,7 +17,7 @@ Vale muito a pena assistir, principalmente pela estética e pela atmosfera que e
 
 Para o entendimento da obra como um todo, é importante ressaltar que o diretor não espera te explicar nada em momento algum. É visível que ele já conta com o fato de que o espectador possui um conhecimento prévio sobre o contexto das Backrooms, de liminal spaces e da sua série original. 
 
-A história é contada sob a perspectiva de alguém que "cai lá" pela primeira vez e não entende nada do que está acontecendo. Isso faz com que o público tenha exatamente o mesmo ponto de vista e a mesma desorientação da protagonista, exceto, claro, para quem já conhece todo o contexto.
+A história é contada sob a perspectiva de alguém que "cai lá" pela primeira vez e não entende nada do que está acontecendo. Isso faz com que o público tenha exatamente o mesmo ponto de vista e a mesma desorientação dos personagens, exceto, claro, para quem já conhece todo o contexto.
 
 Como a ideia das Backrooms foi mudando com o tempo, é fortemente recomendado entender um pouco mais sobre esse universo (eu mesmo já posso estar um pouco desatualizado). Se não me falha a memória, o conceito surgiu por volta de 2019 e, desde então, vem sendo desenvolvido pela comunidade.
 
