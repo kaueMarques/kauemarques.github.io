@@ -25,25 +25,28 @@ A lenda chegou um pouco tarde ao Brasil, mas logo se tornou mainstream, e foi f�
 
 Para facilitar, deixei alguns vídeos e explicações abaixo que ajudam a entender melhor esse universo.
 
+<br>
 
 <details>
-<summary><b>O que sao backrooms</b></summary>
+<summary><b>O que são backrooms</b></summary>
 As Backrooms são uma lenda urbana da internet que descrevem um labirinto infinito de salas de escritório vazias. O ambiente é marcado pelo cheiro de carpete úmido, paredes com papel de parede amarelo e o zumbido constante de luzes fluorescentes. A ideia central é a sensação angustiante de estar preso em uma dimensão paralela isolada.
 </details>
 
+<br>
 
 <details>
 <summary><b>Breve resumo liminal spaces</b></summary>
 Liminal spaces (espaços liminares) são locais de transição, como corredores vazios, saguões de madrugada ou estacionamentos desertos. Quando esses lugares que costumam ser movimentados estão totalmente vazios, eles causam uma sensação de estranheza, nostalgia e leve desconforto, como se a realidade estivesse um pouco fora do lugar.
 </details>
 
+<br>
 
 <details>
 <summary><b>Efeitos da solidao e como leva a loucura</b></summary>
 A privação sensorial e o isolamento prolongado em ambientes artificiais e repetitivos causam danos severos a mente humana. Sem estímulos naturais, como a luz do sol ou a passagem visível do tempo, o cérebro começa a criar suas próprias distrações, gerando alucinações visuais e auditivas. Essa solidão extrema, somada a ansiedade de não ter uma saída e ao zumbido perturbador das luzes, eleva o estresse a níveis insuportáveis. Com o tempo, a pessoa perde completamente a noção de realidade, o que culmina na quebra total da sanidade e leva a loucura.
 </details>
 
-**(clique no texto para mais detalhes desses temas)**
+**_(clique no texto para mais detalhes desses temas)_**
 
 Quanto ao desfecho, não espere por uma continuação. A história finalizou muito bem. Se tiver uma sequência, beleza; caso não tenha, está tudo bem também.
 
