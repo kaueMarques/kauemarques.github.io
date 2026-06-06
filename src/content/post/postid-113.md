@@ -25,9 +25,7 @@ A lenda chegou um pouco tarde ao Brasil, mas logo se tornou mainstream, e foi f�
 
 Para facilitar, deixei alguns vídeos e explicações abaixo que ajudam a entender melhor esse universo.
 
-<br>
-
-<hr>
+<br><hr>
 
 <details>
 <summary><b>O que são backrooms</b></summary>
@@ -73,10 +71,6 @@ Há muito tempo não assisto a algo que me traz essa sensação novamente.
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/0HjdiohVOik" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-**Som da estetica:**
-
-<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/0uEec9a0RsYeQiaeyJapjY" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-
 **Base de conhecimento:**
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/s9rA6qN3f6Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -92,3 +86,7 @@ Há muito tempo não assisto a algo que me traz essa sensação novamente.
 **Uma das primeiras discussões sobre liminal space**
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/K9wPjuuXgDk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+**Som da estetica:**
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/0uEec9a0RsYeQiaeyJapjY" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
