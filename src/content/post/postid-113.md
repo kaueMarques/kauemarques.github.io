@@ -49,8 +49,9 @@ Liminal spaces (espaços liminares) são locais de transição, como corredores 
 A privação sensorial e o isolamento prolongado em ambientes artificiais e repetitivos causam danos severos a mente humana. Sem estímulos naturais, como a luz do sol ou a passagem visível do tempo, o cérebro começa a criar suas próprias distrações, gerando alucinações visuais e auditivas. Essa solidão extrema, somada a ansiedade de não ter uma saída e ao zumbido perturbador das luzes, eleva o estresse a níveis insuportáveis. Com o tempo, a pessoa perde completamente a noção de realidade, o que culmina na quebra total da sanidade e leva a loucura.
 </details>
 
-**_(clique no texto para mais detalhes desses temas)_**
-As descrições foram feitas de forma bem superficial e generalistas.
+**_*(clique no texto para mais detalhes desses temas)_**
+
+*As descrições foram feitas de forma bem superficial e generalistas.
 
 Quanto ao desfecho, não espere por uma continuação. A história finalizou muito bem. Se tiver uma sequência, beleza; caso não tenha, está tudo bem também.
 
