@@ -35,9 +35,9 @@ Se tiver, beleza, caso não tenha. Esta tudo bem também.
 
 A muito tempo não assisto algo que me trás essa sensação novamente.
 
-Nota do filme: 
+**Nota do filme: **
 
-- Um chá de maça com canela. Num clima frio e aquela sensação de conforto, misturdo a notalgia do VHS, estando acordado as 5 da manhã pois acordou cedo e queria algo confortável.
+> Um chá de maça com canela. Num clima frio e aquela sensação de conforto, misturdo a notalgia do VHS, estando acordado as 5 da manhã pois acordou cedo e queria algo confortável.
 
 
 
