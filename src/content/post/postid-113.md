@@ -27,7 +27,7 @@ Para facilitar, deixei alguns vídeos e explicações abaixo que ajudam a entend
 
 
 <details>
-<summary></b>O que sao backrooms</b></summary>
+<summary><b>O que sao backrooms</b></summary>
 As Backrooms são uma lenda urbana da internet que descrevem um labirinto infinito de salas de escritório vazias. O ambiente é marcado pelo cheiro de carpete úmido, paredes com papel de parede amarelo e o zumbido constante de luzes fluorescentes. A ideia central é a sensação angustiante de estar preso em uma dimensão paralela isolada.
 </details>
 
