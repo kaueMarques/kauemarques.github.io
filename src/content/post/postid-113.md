@@ -31,7 +31,7 @@ Diversas pessoas que assistiram, não tinham uma bagagem forte da obra, tendo po
 
 Para o final, não espere ter uma continuação. A história finalizou muito bem.
 
-Se tiver, beleza, caso não tenha. Esta tudo bem também.
+Se tiver continuação, beleza, caso não tenha. Esta tudo bem também.
 
 A muito tempo não assisto algo que me trás essa sensação novamente.
 
