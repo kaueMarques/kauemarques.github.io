@@ -15,7 +15,12 @@ O filme consegue transmitir muito bem aquela sensação de um "conforto desconfo
 
 Senti um pouco de falta de uma trilha sonora mais focada nas lendas originais, mas tudo bem. 
 
-Vale a pena assistir, principalmente pela estética e pela sensação que ele passa. Acredito que, se você for da área da psicologia, pode tirar ainda mais proveito da obra. É isso!
+Vale a pena assistir, principalmente pela estética e pela sensação que ele passa. Acredito que, se você for da área da psicologia, pode tirar ainda mais proveito da obra. 
+
+Sem contar que para entendimento da obra como um todo, ao meu ver o diretor pré espera que você ja tenha entendido de _liminal spaces_ e da série original dele.
+
+Sem contar uma boa bagagem do contexto backrooms.
+
 
 
 
@@ -30,3 +35,11 @@ Som da estetica:
 Base de conhecimento:
 
 <iframe width="100%" height="315" src="https://www.youtube.com/embed/s9rA6qN3f6Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+Entendimento de Liminar Spaces:
+
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/t9OgLEUjz_g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+Serie original do diretor:
+
+<iframe width="100%" height="315" src="https://www.youtube.com/embed/H4dGpz6cnHo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
