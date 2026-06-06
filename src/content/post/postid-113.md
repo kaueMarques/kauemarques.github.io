@@ -19,10 +19,15 @@ Vale a pena assistir, principalmente pela estética e pela sensação que ele pa
 
 Sem contar que para entendimento da obra como um todo, ao meu ver o diretor pré espera que você ja tenha entendido de _liminal spaces_ e da série original dele.
 
-Para uma boa bagagem e melhor proveito da obra, abaixo deixei alguns videos para ter contexto.
+Enfim, para um melhor entendimento do filme deixei alguns videos abaixo para entender o contexto.
 
-É interessante que tenha entendimento de todo contexto prévio. Entretanto, com os quais estão abaixo acredito ser o suficiente.
+Mesmo assim é fortemente recomendado entender mais da ideia do Backrooms, pois como a ideia foi se mudando com o tempo. Ja posso estar desatualizado.
 
+Nao me recordo agora, mas acredito que a idéia venha lá de 2019 e foi se desenvolvendo desde lá pela comunidade.
+
+Chegou tarde no Brasil, e logo se tornou _mainstream_ foi fácil perceber isso na sala de cinema.
+
+Diversas pessoas que assistiram, não tinham uma bagagem forte da obra, tendo por sua vez, não entendendo tudo que a obra quis demonstrar, algo que fez com excelência.
 
 
 
