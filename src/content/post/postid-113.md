@@ -27,6 +27,8 @@ Para facilitar, deixei alguns vídeos e explicações abaixo que ajudam a entend
 
 <br>
 
+<hr>
+
 <details>
 <summary><b>O que são backrooms</b></summary>
 <br>
@@ -51,7 +53,7 @@ A privação sensorial e o isolamento prolongado em ambientes artificiais e repe
 
 - **_(clique no texto para mais detalhes desses temas)_**
 
-
+<hr><br>
 
 Quanto ao desfecho, não espere por uma continuação. A história finalizou muito bem. Se tiver uma sequência, beleza; caso não tenha, está tudo bem também.
 
