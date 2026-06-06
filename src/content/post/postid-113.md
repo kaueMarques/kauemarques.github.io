@@ -50,6 +50,7 @@ A privação sensorial e o isolamento prolongado em ambientes artificiais e repe
 </details>
 
 **_(clique no texto para mais detalhes desses temas)_**
+As descrições foram feitas de forma bem superficial e generalistas.
 
 Quanto ao desfecho, não espere por uma continuação. A história finalizou muito bem. Se tiver uma sequência, beleza; caso não tenha, está tudo bem também.
 
