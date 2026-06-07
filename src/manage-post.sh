@@ -88,8 +88,26 @@ process_file() {
   mkdir -p "src/content/${DIR_NAME}"
   SAFE_TITLE="${ISSUE_TITLE//\"/\\\"}"
   
-  EXTRACTED_TAGS=$(printf "%s
-" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
+  # Detecta marcador $postforce no corpo da issue ou no comentário mais recente
+  POSTFORCE="false"
+  ISSUE_BODY_ORIG="${ISSUE_BODY:-}"
+  COMMENT_BODY_ORIG="${COMMENT_BODY:-}"
+
+  if [[ "${ISSUE_BODY_ORIG}" == *"\$postforce"* ]] || [[ "${COMMENT_BODY_ORIG}" == *"\$postforce"* ]]; then
+    if [[ "${GITHUB_ACTOR:-}" == "kaueMarques" ]]; then
+      POSTFORCE="true"
+      # remover todas as ocorrências do marcador para não publicar no conteúdo
+      ISSUE_BODY="${ISSUE_BODY_ORIG//\$postforce/}"
+      COMMENT_BODY="${COMMENT_BODY_ORIG//\$postforce/}"
+    else
+      # registra comentário avisando que só o usuário autorizado pode usar o marcador
+      gh issue comment "$ISSUE_NUMBER" --body "⚠️ Marcador \$postforce ignorado. Somente o usuário kaueMarques pode forçar o deploy." || true
+      # mantém ISSUE_BODY sem modificações (não remove o marcador)
+      ISSUE_BODY="${ISSUE_BODY_ORIG}"
+    fi
+  fi
+  
+  EXTRACTED_TAGS=$(printf "%s\n" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
   
   if [[ "$ENTITY_TYPE" == "evento" ]]; then
     if [[ -z "$EXTRACTED_TAGS" ]]; then
@@ -106,23 +124,16 @@ process_file() {
     TAGS_ARRAY="[${EXTRACTED_TAGS}]"
   fi
   
-  CLEAN_BODY=$(printf "%s
-" "$ISSUE_BODY" | sed -E 's/(^|[[:space:]])#[a-zA-Z0-9_-]+//g')
+  CLEAN_BODY=$(printf "%s\n" "$ISSUE_BODY" | sed -E 's/(^|[[:space:]])#[a-zA-Z0-9_-]+//g')
   
-  PROCESSED_BODY=$(printf "%s
-" "$CLEAN_BODY" | sed -E 's@\$youtube\(https://www\.youtube\.com/watch\?v=([^)&]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
-  PROCESSED_BODY=$(printf "%s
-" "$PROCESSED_BODY" | sed -E 's@\$youtube\(https://youtu\.be/([^)?]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
-  PROCESSED_BODY=$(printf "%s
-" "$PROCESSED_BODY" | sed -E 's@\$youtube\(([^)]+)\)@<iframe width="100%" height="315" src="\1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>@g')
+  PROCESSED_BODY=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's@\$youtube\(https://www\.youtube\.com/watch\?v=([^)&]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
+  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$youtube\(https://youtu\.be/([^)?]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
+  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$youtube\(([^)]+)\)@<iframe width="100%" height="315" src="\1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>@g')
   
-  PROCESSED_BODY=$(printf "%s
-" "$PROCESSED_BODY" | sed -E 's@\$spotify\(https://open\.spotify\.com/(track|album|playlist|artist|show|episode)/([^?)]+)[^)]*\)@\$spotify(https://open.spotify.com/\2)@g')
-  PROCESSED_BODY=$(printf "%s
-" "$PROCESSED_BODY" | sed -E 's@\$spotify\(([^)]+)\)@<iframe style="border-radius:12px" src="\1" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>@g')
+  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$spotify\(https://open\.spotify\.com/(track|album|playlist|artist|show|episode)/([^?)]+)[^)]*\)@\$spotify(https://open.spotify.com/\2)@g')
+  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$spotify\(([^)]+)\)@<iframe style="border-radius:12px" src="\1" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>@g')
   
-  DESC_SOURCE=$(printf "%s
-" "$CLEAN_BODY" | sed -E 's/\$(youtube|spotify)\([^)]+\)//g')
+  DESC_SOURCE=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's/\$(youtube|spotify)\([^)]+\)//g')
   POST_DESCRIPTION=$(printf "%s" "$DESC_SOURCE" | tr '\n' ' ' | tr '\r' ' ' | sed 's/"/\\"/g' | cut -c 1-140)
 
   {
@@ -135,8 +146,7 @@ process_file() {
     echo "tags: ${TAGS_ARRAY}"
     echo "---"
     echo ""
-    printf "%s
-" "$PROCESSED_BODY"
+    printf "%s\n" "$PROCESSED_BODY"
   } > "$FILE_PATH"
 }
 
@@ -168,10 +178,28 @@ commit_and_deploy() {
     git fetch origin "$BRANCH" --quiet || true
 
     if ! git rebase "origin/$BRANCH" --quiet; then
-      echo "Rebase falhou — conflito detectado."
-      gh issue comment "$ISSUE_NUMBER" --body "⚠️ Falha ao sincronizar alterações: conflito no rebase automático. Precisa de intervenção manual para aplicar a mudança no branch $BRANCH." || true
-      git rebase --abort 2>/dev/null || true
-      exit 1
+      if [[ "${POSTFORCE:-false}" == "true" ]]; then
+        echo "Rebase falhou, mas POSTFORCE ativo: abortando rebase e forçando push."
+        git rebase --abort 2>/dev/null || true
+
+        # Tenta --force-with-lease, se falhar tenta --force
+        if git push --force-with-lease origin "$BRANCH"; then
+          echo "Push forçado com lease realizado com sucesso."
+          break
+        elif git push --force origin "$BRANCH"; then
+          echo "Push forçado (sem lease) realizado com sucesso."
+          break
+        else
+          echo "Falha ao forçar push mesmo com POSTFORCE ativo."
+          gh issue comment "$ISSUE_NUMBER" --body "❌ Falha ao forçar o push apesar do marcador \$postforce. Verifique permissões/proteções do branch." || true
+          exit 1
+        fi
+      else
+        echo "Rebase falhou — conflito detectado."
+        gh issue comment "$ISSUE_NUMBER" --body "⚠️ Falha ao sincronizar alterações: conflito no rebase automático. Precisa de intervenção manual para aplicar a mudança no branch $BRANCH." || true
+        git rebase --abort 2>/dev/null || true
+        exit 1
+      fi
     fi
 
     # primeiro tente push normal (fast-forward)
