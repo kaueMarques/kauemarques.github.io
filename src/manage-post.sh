@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+trap 'echo "Erro no line $LINENO"; exit 1' ERR
 
 
 setup_variables() {
@@ -28,18 +29,19 @@ setup_variables() {
   OPERATION=""
 }
 
+
 determine_operation() {
-  if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" || "$LABEL_NAME" == "note" ) ]] || [[ "$ACTION_TYPE" == "created" && "$COMMENT_BODY" == *'$rm'* ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "exclusao" || "$LABEL_NAME" == "delete" ) ]]; then
+  if [[ "$ACTION_TYPE" == "deleted" ]] || [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "not_planned" ]] || [[ "$ACTION_TYPE" == "unlabeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" || "$LABEL_NAME" == "note" ) ]]; then
     OPERATION="deletar"
     return
   fi
 
-  if [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_NOTE_LABEL" ) ]] || [[ "$ACTION_TYPE" == "labeled" && ( "$LABEL_NAME" == "post" || "$LABEL_NAME" == "evento" || "$LABEL_NAME" == "note" ) ]]; then
+  if [[ "$ACTION_TYPE" == "closed" && "$STATE_REASON" == "completed" ]] || [[ "$ACTION_TYPE" == "opened" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_NOTE_LABEL" ) ]] || [[ "$ACTION_TYPE" == "created" && ( -n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_NOTE_LABEL" ) ]]; then
     OPERATION="postar"
     return
   fi
 
-  if [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_NOTE_LABEL" || -n "$HAS_EDITAR_LABEL" || (-n "$HAS_DELETED_LABEL" && -n "$HAS_GERENCIA_LABEL")) ]]; then
+  if [[ "$ACTION_TYPE" == "reopened" ]] || [[ "$ACTION_TYPE" == "labeled" && "$LABEL_NAME" == "editar" ]] || [[ "$ACTION_TYPE" == "edited" && (-n "$HAS_POST_LABEL" || -n "$HAS_EVENTO_LABEL" || -n "$HAS_NOTE_LABEL") ]]; then
     OPERATION="editar"
     return
   fi
@@ -47,6 +49,7 @@ determine_operation() {
   echo "Nenhuma ação mapeada para este fluxo. Ignorando."
   exit 0 
 }
+
 
 update_github_issue() {
   if [[ "$ACTION_TYPE" == "deleted" ]]; then
@@ -68,6 +71,7 @@ update_github_issue() {
   esac
 }
 
+
 process_file() {
   if [[ "$OPERATION" == "deletar" ]]; then
     git rm --ignore-unmatch "src/content/post/postid-${ISSUE_NUMBER}.md" "src/content/evento/eventid-${ISSUE_NUMBER}.md" "src/content/note/noteid-${ISSUE_NUMBER}.md" 2>/dev/null || true
@@ -84,7 +88,8 @@ process_file() {
   mkdir -p "src/content/${DIR_NAME}"
   SAFE_TITLE="${ISSUE_TITLE//\"/\\\"}"
   
-  EXTRACTED_TAGS=$(printf "%s\n" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
+  EXTRACTED_TAGS=$(printf "%s
+" "$ISSUE_BODY" | grep -o -E '(^|[[:space:]])#[a-zA-Z0-9_-]+' | tr -d ' #\r' | awk 'NF {print "\""$0"\""}' | paste -sd, -)
   
   if [[ "$ENTITY_TYPE" == "evento" ]]; then
     if [[ -z "$EXTRACTED_TAGS" ]]; then
@@ -101,16 +106,23 @@ process_file() {
     TAGS_ARRAY="[${EXTRACTED_TAGS}]"
   fi
   
-  CLEAN_BODY=$(printf "%s\n" "$ISSUE_BODY" | sed -E 's/(^|[[:space:]])#[a-zA-Z0-9_-]+//g')
+  CLEAN_BODY=$(printf "%s
+" "$ISSUE_BODY" | sed -E 's/(^|[[:space:]])#[a-zA-Z0-9_-]+//g')
   
-  PROCESSED_BODY=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's@\$youtube\(https://www\.youtube\.com/watch\?v=([^)&]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
-  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$youtube\(https://youtu\.be/([^)?]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
-  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$youtube\(([^)]+)\)@<iframe width="100%" height="315" src="\1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>@g')
-
-  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$spotify\(https://open\.spotify\.com/(track|album|playlist|artist|show|episode)/([^?)]+)[^)]*\)@\$spotify(https://open.spotify.com/embed/\1/\2)@g')
-  PROCESSED_BODY=$(printf "%s\n" "$PROCESSED_BODY" | sed -E 's@\$spotify\(([^)]+)\)@<iframe style="border-radius:12px" src="\1" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>@g')
+  PROCESSED_BODY=$(printf "%s
+" "$CLEAN_BODY" | sed -E 's@\$youtube\(https://www\.youtube\.com/watch\?v=([^)&]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
+  PROCESSED_BODY=$(printf "%s
+" "$PROCESSED_BODY" | sed -E 's@\$youtube\(https://youtu\.be/([^)?]+)[^)]*\)@\$youtube(https://www.youtube.com/embed/\1)@g')
+  PROCESSED_BODY=$(printf "%s
+" "$PROCESSED_BODY" | sed -E 's@\$youtube\(([^)]+)\)@<iframe width="100%" height="315" src="\1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>@g')
   
-  DESC_SOURCE=$(printf "%s\n" "$CLEAN_BODY" | sed -E 's/\$(youtube|spotify)\([^)]+\)//g')
+  PROCESSED_BODY=$(printf "%s
+" "$PROCESSED_BODY" | sed -E 's@\$spotify\(https://open\.spotify\.com/(track|album|playlist|artist|show|episode)/([^?)]+)[^)]*\)@\$spotify(https://open.spotify.com/\2)@g')
+  PROCESSED_BODY=$(printf "%s
+" "$PROCESSED_BODY" | sed -E 's@\$spotify\(([^)]+)\)@<iframe style="border-radius:12px" src="\1" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>@g')
+  
+  DESC_SOURCE=$(printf "%s
+" "$CLEAN_BODY" | sed -E 's/\$(youtube|spotify)\([^)]+\)//g')
   POST_DESCRIPTION=$(printf "%s" "$DESC_SOURCE" | tr '\n' ' ' | tr '\r' ' ' | sed 's/"/\\"/g' | cut -c 1-140)
 
   {
@@ -123,9 +135,11 @@ process_file() {
     echo "tags: ${TAGS_ARRAY}"
     echo "---"
     echo ""
-    printf "%s\n" "$PROCESSED_BODY"
+    printf "%s
+" "$PROCESSED_BODY"
   } > "$FILE_PATH"
 }
+
 
 commit_and_deploy() {
   git config --global user.name "GHA-GERENCIA-BLOG"
@@ -141,16 +155,58 @@ commit_and_deploy() {
     exit 0
   fi
 
-  git commit -m "chore: $OPERATION $ENTITY_TYPE gerado pela issue #${ISSUE_NUMBER}"
-  git pull origin "$(git branch --show-current)"
-  git push
-  
+  git commit -m "chore: $OPERATION $ENTITY_TYPE gerado pela issue #${ISSUE_NUMBER}" || true
+
+  BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+  MAX_RETRIES=3
+  attempt=1
+
+  while [[ $attempt -le $MAX_RETRIES ]]; do
+    echo "Tentativa $attempt de push (branch: $BRANCH)..."
+
+    # buscar remoto e tentar rebase para incorporar alterações remotas
+    git fetch origin "$BRANCH" --quiet || true
+
+    if ! git rebase "origin/$BRANCH" --quiet; then
+      echo "Rebase falhou — conflito detectado."
+      gh issue comment "$ISSUE_NUMBER" --body "⚠️ Falha ao sincronizar alterações: conflito no rebase automático. Precisa de intervenção manual para aplicar a mudança no branch $BRANCH." || true
+      git rebase --abort 2>/dev/null || true
+      exit 1
+    fi
+
+    # primeiro tente push normal (fast-forward)
+    if git push origin "$BRANCH"; then
+      echo "Push realizado com sucesso (fast-forward)."
+      break
+    fi
+
+    # se falhar por não-fast-forward, tente --force-with-lease (mais seguro que --force)
+    echo "Push não fast-forward; tentando push --force-with-lease..."
+    if git push --force-with-lease origin "$BRANCH"; then
+      echo "Push forçado com lease realizado com sucesso."
+      break
+    fi
+
+    # se ainda falhou, aguarda e tenta novamente
+    echo "Push ainda falhou. Aguardando e tentando novamente..."
+    sleep $((attempt * 2))
+    attempt=$((attempt + 1))
+  done
+
+  if [[ $attempt -gt $MAX_RETRIES ]]; then
+    echo "Não foi possível enviar as alterações após $MAX_RETRIES tentativas."
+    gh issue comment "$ISSUE_NUMBER" --body "❌ Não foi possível publicar automaticamente o post após várias tentativas. Por favor, verifique conflitos no branch $BRANCH e faça o deploy manualmente." || true
+    exit 1
+  fi
+
+  # aciona workflow de deploy
   if [[ "$ACTION_TYPE" == "deleted" ]]; then
     gh workflow run deploy.yml -f operation="$OPERATION" -f entity_type="$ENTITY_TYPE"
   else
     gh workflow run deploy.yml -f issue_number="$ISSUE_NUMBER" -f operation="$OPERATION" -f entity_type="$ENTITY_TYPE"
   fi
 }
+
 
 close_issue_if_completed() {
   if [[ "$ACTION_TYPE" == "deleted" ]]; then
@@ -164,6 +220,7 @@ close_issue_if_completed() {
     gh issue close $ISSUE_NUMBER --reason "completed" || true
   fi
 }
+
 
 setup_variables
 determine_operation
