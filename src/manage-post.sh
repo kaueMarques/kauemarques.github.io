@@ -2,6 +2,55 @@
 set -euo pipefail
 trap 'echo "Erro no line $LINENO"; exit 1' ERR
 
+# início do bloco de validação forte — confirmar identidade do ator (somente kaueMarques)
+EXPECTED_USER="kaueMarques"
+
+# validação básica por variável de ambiente
+if [[ "${GITHUB_ACTOR:-}" != "$EXPECTED_USER" ]]; then
+  echo "err" >&2
+  exit 1
+fi
+
+# deve existir o payload do evento
+if [[ -z "${GITHUB_EVENT_PATH:-}" || ! -f "$GITHUB_EVENT_PATH" ]]; then
+  echo "err" >&2
+  exit 1
+fi
+
+# obtém o id do usuário via API (requere gh autenticado)
+GH_ID=$(gh api /users/"$EXPECTED_USER" -q .id 2>/dev/null) || { echo "err" >&2; exit 1; }
+
+# validações adicionais: verifica se o payload contém o mesmo id (sender/comment.user/issue.user/actor/requester)
+python3 - <<'PY' "$GITHUB_EVENT_PATH" "$GH_ID" "$EXPECTED_USER"
+import json,sys
+p=sys.argv[1]; gid=sys.argv[2]; login=sys.argv[3]
+try:
+    evt=json.load(open(p))
+except Exception:
+    sys.exit(1)
+paths=[("sender",),("comment","user"),("issue","user"),("actor",),("requester",)]
+for path in paths:
+    o=evt
+    for k in path:
+        if isinstance(o,dict) and k in o:
+            o=o[k]
+        else:
+            o=None
+            break
+    if isinstance(o,dict):
+        if 'id' in o and str(o['id'])==gid:
+            sys.exit(0)
+        if 'login' in o and o['login']==login:
+            sys.exit(0)
+sys.exit(1)
+PY
+
+if [[ $? -ne 0 ]]; then
+  echo "err" >&2
+  exit 1
+fi
+# fim do bloco de validação
+
 
 setup_variables() {
   HAS_POST_LABEL=$(echo "$LABELS" | grep -i '"post"' || true)
