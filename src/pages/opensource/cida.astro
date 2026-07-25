@@ -1,0 +1,174 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+import PostPreview from "@/components/blog/PostPreview.astro";
+import { getAllPosts } from "@/data/post";
+
+const meta = {
+	title: "Cida LLM Reducer Motor",
+	description: "Cida LLM Reducer Motor - Otimizando Custos e Tokens para Modelos de Linguagem."
+};
+
+const allPosts = await getAllPosts();
+const cidaPosts = allPosts.filter((post) => post.data.tags.includes("cida")).sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
+---
+
+<PageLayout meta={meta}>
+	<h1 class="title mb-8">Cida LLM Reducer Motor</h1>
+
+	<div class="prose prose-sm prose-cactus max-w-none mb-12">
+		<p>
+			O <strong>Cida LLM Reducer Motor</strong> é um projeto Open Source focado em otimizar o uso de tokens ao interagir com Modelos de Linguagem (LLMs). Sua principal arquitetura consiste em atuar como um middleware que recebe prompts, aplica heurísticas e algoritmos para reduzir o texto sem perder o contexto semântico principal, e só então envia para a API final do LLM (como OpenAI, Anthropic, etc).
+		</p>
+		<p>
+			O objetivo principal é <strong>diminuir drasticamente os custos operacionais</strong> com APIs pagas por token e melhorar o tempo de resposta, tudo isso mantendo a qualidade das respostas geradas pela Inteligência Artificial.
+		</p>
+		<p>
+			Explore abaixo os artigos já escritos no blog relacionando casos de uso, desenvolvimentos ou tutoriais envolvendo a tag <code>cida</code>, e logo em seguida as últimas releases oficiais do projeto prontas para download.
+		</p>
+	</div>
+
+	{cidaPosts.length > 0 && (
+		<section class="mb-16">
+			<h2 class="title text-lg mb-6 flex items-center gap-2">
+				<svg
+					aria-hidden="true"
+					class="h-5 w-5 text-accent"
+					fill="none"
+					stroke="currentColor"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="1.5"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path d="M0 0h24v24H0z" fill="none" stroke="none" />
+					<path d="M7.859 6h-2.834a2.025 2.025 0 0 0 -2.025 2.025v2.834c0 .537 .213 1.052 .593 1.432l6.116 6.116a2.025 2.025 0 0 0 2.864 0l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-6.117 -6.116a2.025 2.025 0 0 0 -1.431 -.593z" />
+					<path d="M17.573 18.407l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-7.117 -7.116" />
+					<path d="M6 9h-.01" />
+				</svg>
+				Posts sobre Cida
+			</h2>
+			<ul class="space-y-4 text-start">
+				{cidaPosts.map((p) => (
+					<li class="grid gap-1 sm:grid-cols-[auto_1fr] sm:[&_q]:col-start-2">
+						<PostPreview post={p} />
+					</li>
+				))}
+			</ul>
+		</section>
+	)}
+
+	<section class="mb-12">
+		<h2 class="title text-lg mb-6 flex items-center gap-2">
+			<svg
+				aria-hidden="true"
+				class="h-5 w-5 text-accent"
+				fill="none"
+				stroke="currentColor"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="1.5"
+				viewBox="0 0 24 24"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+				<path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" />
+				<path d="M7 11l5 5l5 -5" />
+				<path d="M12 4l0 12" />
+			</svg>
+			Downloads (Últimas Releases GitHub)
+		</h2>
+
+		<div id="github-releases-container" class="space-y-4">
+			<p class="text-sm text-gray-500 italic" id="github-loading-msg">Buscando releases diretamente do GitHub...</p>
+			<!-- Inject releases here via JS -->
+		</div>
+	</section>
+</PageLayout>
+
+<script>
+	async function fetchGithubReleases() {
+		const container = document.getElementById("github-releases-container");
+		if (!container) return;
+
+		try {
+			const response = await fetch("https://api.github.com/repos/kaueMarques/cida-motor/releases");
+
+			if (!response.ok) {
+				throw new Error("Não foi possível buscar as releases da API.");
+			}
+
+			const releases = await response.json();
+			const loadingMsg = document.getElementById("github-loading-msg");
+			if (loadingMsg) loadingMsg.remove();
+
+			if (releases.length === 0) {
+				container.innerHTML = '<p class="text-sm text-gray-500 italic">Nenhuma release encontrada neste repositório até o momento.</p>';
+				return;
+			}
+
+			const list = document.createElement('ul');
+			list.className = "flex flex-col gap-4";
+
+			// Mostra no máximo as 5 mais recentes
+			const topReleases = releases.slice(0, 5);
+
+			topReleases.forEach((release: any) => {
+				const listItem = document.createElement('li');
+				listItem.className = "flex flex-col sm:flex-row sm:items-center justify-between border border-[rgba(166,124,82,0.2)] p-4 rounded-md bg-[rgba(166,124,82,0.05)]";
+
+				const infoDiv = document.createElement('div');
+				infoDiv.className = "mb-4 sm:mb-0";
+
+				const title = document.createElement('h3');
+				title.className = "font-bold text-accent text-lg";
+				title.textContent = release.name || release.tag_name;
+
+				const date = document.createElement('p');
+				date.className = "text-xs text-gray-500 mt-1";
+				const pubDate = new Date(release.published_at).toLocaleDateString("pt-BR", { year: 'numeric', month: 'long', day: 'numeric' });
+				date.textContent = `Publicado em: ${pubDate}`;
+
+				infoDiv.appendChild(title);
+				infoDiv.appendChild(date);
+
+				const actionDiv = document.createElement('div');
+
+				const downloadLink = document.createElement('a');
+				downloadLink.href = release.html_url;
+				downloadLink.target = "_blank";
+				downloadLink.rel = "noopener noreferrer";
+				downloadLink.className = "inline-flex items-center gap-2 bg-accent text-global-bg px-4 py-2 rounded-sm font-semibold hover:opacity-90 transition-opacity text-sm";
+
+				const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>`;
+
+				downloadLink.innerHTML = `${iconSvg} Ver no GitHub`;
+
+				// Se tiver assets, coloca link direto para o primeiro
+				if(release.assets && release.assets.length > 0) {
+					downloadLink.href = release.assets[0].browser_download_url;
+					downloadLink.innerHTML = `${iconSvg} Baixar ${release.assets[0].name}`;
+				}
+
+				actionDiv.appendChild(downloadLink);
+
+				listItem.appendChild(infoDiv);
+				listItem.appendChild(actionDiv);
+				list.appendChild(listItem);
+			});
+
+			container.appendChild(list);
+
+		} catch (error) {
+			const loadingMsg = document.getElementById("github-loading-msg");
+			if (loadingMsg) {
+				loadingMsg.textContent = "Erro ao carregar as releases. Tente novamente mais tarde.";
+				loadingMsg.classList.add("text-red-500");
+			}
+			console.error("Github fetch error:", error);
+		}
+	}
+
+	// Executa o fetch. Em Astro, tags <script> por padrão aguardam o DOM
+	fetchGithubReleases();
+</script>

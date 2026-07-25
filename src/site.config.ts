@@ -31,7 +31,7 @@ export const siteConfig: SiteConfig = {
 };
 
 // Used to generate links in both the Header & Footer.
-export const menuLinks: { path: string; title: string }[] = [
+export const menuLinks: { path: string; title: string; dropdown?: { path: string; title: string }[] }[] = [
 	{
 		path: "/",
 		title: "Home",
@@ -47,6 +47,16 @@ export const menuLinks: { path: string; title: string }[] = [
 	{
 		path: "/eventos",
 		title: "Eventos",
+	},
+	{
+		path: "#",
+		title: "My OpenSource Projects",
+		dropdown: [
+			{
+				path: "/opensource/cida/",
+				title: "Cida LLM Reducer Motor",
+			},
+		],
 	},
 ];
 
