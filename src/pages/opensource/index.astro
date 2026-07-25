@@ -1,0 +1,53 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+
+const meta = {
+	title: "My OpenSource Projects",
+	description: "Meus projetos Open Source",
+};
+---
+
+<PageLayout meta={meta}>
+	<h1 class="title mb-8">My OpenSource Projects</h1>
+
+	<div class="prose prose-sm prose-cactus max-w-none mb-12">
+		<p>
+			Aqui estão listados os principais projetos Open Source que mantenho ou dos quais participo
+			ativamente. Clique em cada um para acessar a página detalhada contendo documentação,
+			artigos relacionados e links para download.
+		</p>
+	</div>
+
+	<section class="grid gap-6">
+		<a
+			href="/opensource/cida/"
+			class="group flex flex-col gap-2 rounded-lg border border-[rgba(166,124,82,0.2)] p-6 transition-colors hover:bg-[rgba(166,124,82,0.05)]"
+		>
+			<h2 class="title text-xl text-accent group-hover:underline">Cida LLM Reducer Motor</h2>
+			<p class="text-sm text-gray-600 dark:text-gray-400">
+				Motor/middleware Open Source para otimizar o uso de tokens e reduzir custos em integrações
+				com APIs de Modelos de Linguagem (LLMs).
+			</p>
+			<span class="mt-2 text-sm font-semibold text-link flex items-center gap-1">
+				Ver projeto
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="1em"
+					height="1em"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="h-4 w-4"
+				>
+					<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+					<path d="M5 12l14 0"></path>
+					<path d="M13 18l6 -6"></path>
+					<path d="M13 6l6 6"></path>
+				</svg>
+			</span>
+		</a>
+	</section>
+</PageLayout>
