@@ -49,7 +49,7 @@ export const menuLinks: { path: string; title: string; dropdown?: { path: string
 		title: "Eventos",
 	},
 	{
-		path: "#",
+		path: "/opensource/",
 		title: "My OpenSource Projects",
 		dropdown: [
 			{
