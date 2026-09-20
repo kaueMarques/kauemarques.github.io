@@ -90,3 +90,6 @@ Há muito tempo não assisto a algo que me traz essa sensação novamente.
 **Som da estetica:**
 
 <iframe style="border-radius:12px" src="https://open.spotify.com/0uEec9a0RsYeQiaeyJapjY" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+
+
+.
